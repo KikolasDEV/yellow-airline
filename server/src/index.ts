@@ -3,7 +3,9 @@ import cors from 'cors';
 import type { Flight } from './models/Flight.js';
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173' 
+}));
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
