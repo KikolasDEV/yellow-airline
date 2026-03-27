@@ -1,3 +1,5 @@
+import { VipForm } from '../components/VipForm';
+
 export const VipZone = () => {
   return (
     <div className="max-w-2xl mx-auto text-center py-20">
@@ -8,7 +10,7 @@ export const VipZone = () => {
         Únete al club Yellow Gold para acceder a vuelos exclusivos y salas lounge.
       </p>
       <div className="bg-white p-8 rounded-3xl shadow-2xl border border-yellow-100">
-        <p className="font-bold">Próximamente: Formulario de Registro Profesional</p>
+        <VipForm />
       </div>
     </div>
   );
