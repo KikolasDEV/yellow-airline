@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-// Usamos una constante global para evitar múltiples 
-// conexiones en desarrollo (un truco de senior)
+// Usamos una constante global para evitar múltiples conexiones en desarrollo
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 export const prisma = globalForPrisma.prisma || new PrismaClient();

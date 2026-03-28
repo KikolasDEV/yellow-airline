@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('✈️ Iniciando el seeding de Yellow Airline...');
 
-  // 1. Limpiamos los datos existentes para no duplicar (Idempotencia)
+  // 1. Limpiamos los datos existentes para no duplicar
   await prisma.flight.deleteMany();
 
   // 2. Creamos una lista de vuelos realistas
