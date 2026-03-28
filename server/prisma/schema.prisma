@@ -17,7 +17,8 @@ model User {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
-  password  String   // En una fase real, aquí guardaríamos el hash
+  passport  String
+  password  String
   isVip     Boolean  @default(true) // Todos tus usuarios actuales serán VIP
   createdAt DateTime @default(now())
 }

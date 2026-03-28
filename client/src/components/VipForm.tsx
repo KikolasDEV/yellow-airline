@@ -13,13 +13,31 @@ const vipSchema = z.object({
 type VipFormData = z.infer<typeof vipSchema>;
 
 export const VipForm = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<VipFormData>({
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<VipFormData>({
     resolver: zodResolver(vipSchema)
   });
 
-  const onSubmit = (data: VipFormData) => {
-    console.log("Enviando a Yellow Airline:", data);
-    // Aquí haremos el fetch al backend más adelante
+  const onSubmit = async (data: VipFormData) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/users/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("⭐ ¡Bienvenido al Club Yellow Gold! Tu acceso VIP ha sido creado.");
+        reset(); // Limpia el formulario
+      } else {
+        alert(result.error || "Error al registrar");
+      }
+    } catch (error) {
+      // Usamos la variable 'error' para ver el detalle en la consola del navegador
+      console.error("Fallo de red en Yellow Airline:", error);
+      alert("No se pudo conectar con el servidor.");
+    }
   };
 
   return (
