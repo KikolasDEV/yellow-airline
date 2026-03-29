@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useNavigate } from 'react-router-dom';
 
 // 1. Definimos las reglas de validación
 const vipSchema = z.object({
@@ -13,6 +14,8 @@ const vipSchema = z.object({
 type VipFormData = z.infer<typeof vipSchema>;
 
 export const VipForm = () => {
+  const navigate = useNavigate();
+  
   const { register, handleSubmit, formState: { errors }, reset } = useForm<VipFormData>({
     resolver: zodResolver(vipSchema)
   });
@@ -29,7 +32,8 @@ export const VipForm = () => {
 
       if (response.ok) {
         alert("⭐ ¡Bienvenido al Club Yellow Gold! Tu acceso VIP ha sido creado.");
-        reset(); // Limpia el formulario
+        reset();
+        navigate('/login');
       } else {
         alert(result.error || "Error al registrar");
       }
