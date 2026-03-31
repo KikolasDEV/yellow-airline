@@ -3,15 +3,22 @@ import { prisma } from '../lib/prisma.js';
 
 const router = Router();
 
-// GET: Obtener todos los vuelos de la DB
+// GET: Obtener vuelos con filtros opcionales
 router.get('/', async (req, res) => {
+  const { origin, destination } = req.query;
+
   try {
     const flights = await prisma.flight.findMany({
-      orderBy: { departureTime: 'asc' } // Los ordenamos por hora de salida
+      where: {
+        // Si existe el parámetro, filtra; si no, trae todos
+        origin: origin ? { contains: String(origin), mode: 'insensitive' } : undefined,
+        destination: destination ? { contains: String(destination), mode: 'insensitive' } : undefined,
+      },
+      orderBy: { departureTime: 'asc' }
     });
     res.json(flights);
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener vuelos" });
+    res.status(500).json({ error: "Error al buscar vuelos" });
   }
 });
 

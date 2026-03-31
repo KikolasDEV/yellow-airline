@@ -21,6 +21,7 @@ model User {
   password  String
   isVip     Boolean  @default(true) // Todos tus usuarios actuales serán VIP
   createdAt DateTime @default(now())
+  bookings  Booking[]
 }
 
 model Flight {
@@ -30,4 +31,14 @@ model Flight {
   destination    String
   departureTime  DateTime
   price          Float
+  bookings  Booking[]
+}
+
+model Booking {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  flight    Flight   @relation(fields: [flightId], references: [id])
+  flightId  Int
+  createdAt DateTime @default(now())
 }

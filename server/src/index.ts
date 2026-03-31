@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import flightRoutes from './routes/flightRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 
 const app = express();
 app.use(cors({
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/flights', flightRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor volando en http://localhost:${PORT}`);
