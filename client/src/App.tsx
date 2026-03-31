@@ -4,6 +4,7 @@ import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { VipZone } from './pages/VipZone';
 import { Login } from './pages/Login';
+import { MyBookings } from './pages/MyBookings';
 import { Toaster } from 'react-hot-toast';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="vip" element={<VipZone />} />
           <Route path="login" element={<Login />} />
+          <Route path="/my-bookings" element={<MyBookings />} />
         </Route>
       </Routes>
     </BrowserRouter>

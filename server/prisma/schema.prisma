@@ -25,13 +25,13 @@ model User {
 }
 
 model Flight {
-  id             Int      @id @default(autoincrement())
-  number         String   @unique
-  origin         String
-  destination    String
-  departureTime  DateTime
-  price          Float
-  bookings  Booking[]
+  id            Int       @id @default(autoincrement())
+  origin        String
+  destination   String
+  departureTime DateTime
+  price         Float
+  capacity      Int       @default(180) // Capacidad estándar A320
+  bookings      Booking[]
 }
 
 model Booking {
@@ -40,5 +40,13 @@ model Booking {
   userId    Int
   flight    Flight   @relation(fields: [flightId], references: [id])
   flightId  Int
+  
+  // Desglose de pasajeros
+  adults    Int      @default(1)
+  children  Int      @default(0)
+  infants   Int      @default(0)
   createdAt DateTime @default(now())
+
+  // Evitamos que un usuario reserve el mismo vuelo dos veces
+  @@unique([userId, flightId]) 
 }
