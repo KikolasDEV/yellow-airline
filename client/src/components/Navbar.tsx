@@ -1,38 +1,50 @@
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 export const Navbar = () => {
   const navigate = useNavigate();
-  // Comprobamos si hay un token para saber si el usuario está logueado
   const isLoggedIn = !!localStorage.getItem('token');
+  const userName = localStorage.getItem('userName');
+
+  const handleLogout = () => {
+    localStorage.clear();
+    toast.success("Sesión cerrada. ¡Vuelve pronto!");
+    navigate('/');
+    window.location.reload(); // Recarga limpia de estado
+  };
 
   return (
-    <nav className="bg-yellow-airline p-4 shadow-md flex justify-between items-center">
-      <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-        <span className="text-2xl font-bold text-black tracking-tighter">
-          YELLOW AIRLINE ✈️
+    <nav className="bg-yellow-airline p-4 px-8 shadow-lg flex justify-between items-center sticky top-0 z-50">
+      <Link to="/" className="flex items-center gap-2 hover:scale-105 transition-transform">
+        <span className="text-2xl font-black text-black tracking-tighter">
+          YELLOW AIRLINE <span className="text-sm align-top italic">GOLD</span>
         </span>
       </Link>
       
-      <div className="flex gap-6 items-center">
-        <Link to="/" className="font-bold hover:text-gray-700 text-black">Vuelos</Link>
+      <div className="flex gap-8 items-center">
+        {isLoggedIn && (
+          <span className="text-xs font-bold text-black border-r border-black/20 pr-4">
+            HOLA, {userName?.toUpperCase()} 👋
+          </span>
+        )}
         
         {isLoggedIn ? (
           <button 
-            onClick={() => { localStorage.clear(); window.location.reload(); }}
-            className="bg-black text-white px-4 py-2 rounded-full font-bold text-sm"
+            onClick={handleLogout}
+            className="bg-black text-white px-6 py-2 rounded-full font-bold text-xs hover:bg-gray-800 transition-all"
           >
-            Cerrar Sesión
+            LOGOUT
           </button>
         ) : (
-          <div className="flex gap-3">
-            <Link to="/login" className="font-bold text-black border-2 border-black px-4 py-2 rounded-full hover:bg-black hover:text-white transition-all text-sm">
-              Iniciar Sesión
+          <div className="flex gap-4 items-center">
+            <Link to="/login" className="font-bold text-black text-sm hover:underline">
+              Login
             </Link>
             <button 
               onClick={() => navigate('/vip')}
-              className="bg-black text-white px-5 py-2 rounded-full font-bold hover:bg-gray-800 transition-colors shadow-lg text-sm"
+              className="bg-black text-white px-6 py-2 rounded-full font-black text-xs hover:scale-105 transition-all shadow-lg shadow-black/20"
             >
-              Área VIP ⭐
+              BECOME VIP ⭐
             </button>
           </div>
         )}

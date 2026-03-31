@@ -2,4 +2,20 @@
 
 @theme {
   --color-yellow-airline: #FFD700;
+  /* Variante de pulso más suave */
+  --animation-soft-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Suavizar el scroll de toda la página */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply antialiased text-gray-900 bg-gray-50;
+}
+
+/* Personalización del Skeleton */
+.animate-pulse {
+  background-color: rgba(0, 0, 0, 0.05); /* Un gris muy sutil */
 }
