@@ -1,0 +1,60 @@
+import { Router } from 'express';
+import { prisma } from '../lib/prisma.js';
+import { authenticateToken } from '../middleware/auth.js';
+const router = Router();
+router.get('/my-bookings', authenticateToken, async (req, res) => {
+    try {
+        const bookings = await prisma.booking.findMany({
+            where: { userId: req.user.userId },
+            include: { flight: true } // Traemos la info del vuelo asociada
+        });
+        res.json(bookings);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Error al obtener tus reservas" });
+    }
+});
+// POST: Crear una reserva (Solo usuarios logueados)
+router.post('/', authenticateToken, async (req, res) => {
+    const { flightId, adults, children, infants } = req.body;
+    const userId = req.user.userId;
+    try {
+        // 1. Verificar si ya tiene ESTE vuelo (Evitar duplicados)
+        const existingBooking = await prisma.booking.findUnique({
+            where: { userId_flightId: { userId, flightId } }
+        });
+        if (existingBooking) {
+            return res.status(400).json({ error: "Ya tienes una reserva para este vuelo." });
+        }
+        // 2. Verificar disponibilidad de asientos
+        const flight = await prisma.flight.findUnique({
+            where: { id: flightId },
+            include: { _count: { select: { bookings: true } } } // Esto es ultra eficiente
+        });
+        const totalOccupied = await prisma.booking.aggregate({
+            where: { flightId },
+            _sum: { adults: true, children: true }
+        });
+        const currentSeats = (totalOccupied._sum.adults || 0) + (totalOccupied._sum.children || 0);
+        const requestedSeats = Number(adults) + Number(children);
+        if (currentSeats + requestedSeats > (flight?.capacity || 0)) {
+            return res.status(400).json({ error: "Vuelo completo. No hay suficientes asientos." });
+        }
+        // 3. Crear reserva con desglose
+        const newBooking = await prisma.booking.create({
+            data: {
+                userId,
+                flightId,
+                adults: Number(adults),
+                children: Number(children),
+                infants: Number(infants)
+            }
+        });
+        res.status(201).json(newBooking);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Error al procesar la reserva" });
+    }
+});
+export default router;
+//# sourceMappingURL=bookingRoutes.js.map
