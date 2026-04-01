@@ -33,6 +33,7 @@ i18n
           "vip_access_copy": "Accede a tu cuenta VIP de Yellow Airline",
           "password": "Contraseña",
           "login_cta": "Despegar ✈️",
+          "login_success_prefix": "¡Hola de nuevo,",
           "join_vip_prompt": "¿Aún no eres miembro?",
           "join_vip_cta": "Únete al Club VIP",
           "login_connection_error": "Error de conexión con el servidor",
@@ -61,6 +62,8 @@ i18n
           "members_only_booking": "🔒 Debes ser miembro VIP para reservar",
           "booking_failed": "No se pudo procesar la reserva",
           "booking_connection_error": "Fallo de conexión con la aerolínea",
+          "flight_booked_prefix": "¡Vuelo a",
+          "flight_booked_suffix": "reservado!",
           "¡Reserva confirmada!": "¡Reserva confirmada!",
           "¡Vuelo a": "¡Vuelo a",
           "reservado!": "reservado!"
@@ -92,6 +95,7 @@ i18n
           "vip_access_copy": "Access your Yellow Airline VIP account",
           "password": "Password",
           "login_cta": "Take Off ✈️",
+          "login_success_prefix": "Welcome back,",
           "join_vip_prompt": "Not a member yet?",
           "join_vip_cta": "Join the VIP Club",
           "login_connection_error": "Server connection error",
@@ -120,6 +124,8 @@ i18n
           "members_only_booking": "🔒 You must be a VIP member to book",
           "booking_failed": "Booking could not be processed",
           "booking_connection_error": "Airline connection failed",
+          "flight_booked_prefix": "Flight to",
+          "flight_booked_suffix": "booked!",
           "¡Reserva confirmada!": "Booking confirmed!",
           "¡Vuelo a": "Flight to",
           "reservado!": "booked!"

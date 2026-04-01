@@ -1,8 +1,10 @@
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
+import type { PassengerCount } from '../types';
 
 interface PassengerProps {
-  count: { adults: number; children: number; infants: number };
-  setCount: React.Dispatch<React.SetStateAction<{ adults: number; children: number; infants: number }>>;
+  count: PassengerCount;
+  setCount: React.Dispatch<React.SetStateAction<PassengerCount>>;
 }
 
 export const PassengerSelector = ({ count, setCount }: PassengerProps) => {
@@ -22,31 +24,45 @@ export const PassengerSelector = ({ count, setCount }: PassengerProps) => {
   };
 
   return (
-    <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3 mb-4">
-      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{t('Passengers')}</p>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="eyebrow">Cabin Mix</p>
+          <p className="text-sm text-[var(--text-secondary)]">Tap-friendly counters with soft motion and live totals.</p>
+        </div>
+        <div className="booking-chip booking-chip-strong">{count.adults + count.children + count.infants} total</div>
+      </div>
       
       {[
         { id: 'adults' as const, label: t('Adultos'), sub: t('years_12_plus') },
         { id: 'children' as const, label: t('Children'), sub: t('years_2_11') },
         { id: 'infants' as const, label: t('Infants'), sub: t('under_2_years') }
       ].map((p) => (
-        <div key={p.id} className="flex justify-between items-center">
+        <motion.div
+          key={p.id}
+          layout
+          className="flex items-center justify-between rounded-[1.4rem] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface-elevated)_92%,transparent_8%)] p-4"
+        >
           <div>
-            <p className="text-sm font-bold leading-none">{p.label}</p>
-            <p className="text-[10px] text-gray-400">{p.sub}</p>
+            <p className="text-sm font-bold leading-none text-[var(--text-primary)]">{p.label}</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{p.sub}</p>
           </div>
-          <div className="flex items-center gap-3">
-            <button 
+          <div className="flex items-center gap-3 rounded-full border border-[var(--border-soft)] px-2 py-1">
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.9 }}
               onClick={() => update(p.id, -1)}
-              className="w-6 h-6 flex items-center justify-center bg-white border rounded-full hover:bg-gray-100"
-            >-</button>
-            <span className="text-sm font-bold w-4 text-center">{count[p.id]}</span>
-            <button 
+              className="icon-button h-8 w-8"
+            >-</motion.button>
+            <motion.span key={`${p.id}-${count[p.id]}`} initial={{ scale: 0.85, opacity: 0.6 }} animate={{ scale: 1, opacity: 1 }} className="w-6 text-center text-base font-black text-[var(--text-primary)]">{count[p.id]}</motion.span>
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.9 }}
               onClick={() => update(p.id, 1)}
-              className="w-6 h-6 flex items-center justify-center bg-black text-white rounded-full hover:bg-gray-800"
-            >+</button>
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--text-primary)] text-sm text-[var(--text-inverse)]"
+            >+</motion.button>
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
   );

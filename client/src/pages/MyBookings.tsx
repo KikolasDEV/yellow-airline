@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { AnimatedRoute } from '../components/AnimatedRoute';
 import type { Flight } from '../types';
 
 interface Booking {
   id: number;
-  userId: number;   
-  flightId: number; 
+  userId: number;
+  flightId: number;
   adults: number;
   children: number;
   infants: number;
-  createdAt: string; // En el front llega como string (ISO date)
-  flight: Flight;    // La relación que traemos con el "include" del backend
+  createdAt: string;
+  flight: Flight;
 }
 
 export const MyBookings = () => {
@@ -34,7 +36,7 @@ export const MyBookings = () => {
 
       try {
         const response = await fetch('http://localhost:5000/api/bookings/my-bookings', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: { 'Authorization': `Bearer ${token}` },
         });
 
         if (!response.ok) {
@@ -51,49 +53,51 @@ export const MyBookings = () => {
         setLoading(false);
       }
     };
+
     fetchMyBookings();
   }, [navigate, t]);
 
-  if (loading) return <div className="text-center py-20 font-bold italic">{t('load_bookings')}</div>;
+  if (loading) {
+    return <div className="surface-card px-6 py-16 text-center text-lg font-bold text-[var(--text-secondary)]">{t('load_bookings')}</div>;
+  }
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4">
-      <h1 className="text-4xl font-black mb-10 italic uppercase tracking-tighter">
-        {t("my_bookings")} 🧳
-      </h1>
+    <div className="space-y-6 py-4">
+      <section className="surface-card p-6 md:p-8">
+        <p className="eyebrow">Passenger Ledger</p>
+        <div className="mt-3 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="section-title">{t('my_bookings')}</h1>
+            <p className="section-copy mt-2 max-w-2xl">Every confirmed route now sits in a calmer ledger with the same premium visual language as the search and booking flow.</p>
+          </div>
+          <div className="booking-chip booking-chip-strong">{bookings.length} active booking{bookings.length === 1 ? '' : 's'}</div>
+        </div>
+      </section>
 
       {bookings.length === 0 ? (
-        <div className="bg-white p-20 rounded-[3rem] text-center shadow-xl border border-dashed border-gray-200">
-          <p className="text-gray-400 font-medium">{t('no_bookings')}</p>
+        <div className="surface-card px-6 py-16 text-center">
+          <p className="text-xl font-semibold text-[var(--text-secondary)]">{t('no_bookings')}</p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="grid gap-5">
           {bookings.map((booking) => (
-            <div key={booking.id} className="bg-white p-8 rounded-3xl shadow-lg border-l-8 border-yellow-airline flex flex-col md:flex-row justify-between items-center gap-6">
-              <div className="flex items-center gap-8">
-                <div className="text-center">
-                  <p className="text-2xl font-black leading-none">{booking.flight.origin}</p>
-                  <p className="text-[10px] text-gray-400 font-bold uppercase">{t('origin_label')}</p>
+            <motion.article key={booking.id} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="surface-card p-6">
+              <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-center">
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="promo-badge promo-badge-contrast">{t('confirmed')}</span>
+                    <span className="booking-chip">#{booking.id}00{booking.flightId}</span>
+                  </div>
+                  <AnimatedRoute origin={booking.flight.origin} destination={booking.flight.destination} />
                 </div>
-                <span className="text-2xl italic text-yellow-airline font-black">➔</span>
-                <div className="text-center">
-                  <p className="text-2xl font-black leading-none">{booking.flight.destination}</p>
-                  <p className="text-[10px] text-gray-400 font-bold uppercase">{t('destination_label')}</p>
-                </div>
-              </div>
 
-              <div className="flex flex-col items-center md:items-end">
-                <p className="text-xs font-bold text-gray-400 uppercase">{t('passengers_label')}</p>
-                <div className="flex gap-2 text-sm font-bold">
-                  <span>👤 {booking.adults} {t("Adultos")}</span>
-                  {booking.children > 0 && <span>🧒 {booking.children} {t('Children')}</span>}
-                  {booking.infants > 0 && <span>👶 {booking.infants} {t('Infants')}</span>}
-                </div>
-                <p className="mt-2 text-xs bg-gray-100 px-3 py-1 rounded-full font-bold">
-                  {t('confirmed')}: #{booking.id}00{booking.flightId}
-                </p>
+                <div className="space-y-3 lg:text-right">
+                  <p className="text-sm font-semibold text-[var(--text-secondary)]">👤 {booking.adults} {t('Adultos')}</p>
+                  {booking.children > 0 && <p className="text-sm font-semibold text-[var(--text-secondary)]">🧒 {booking.children} {t('Children')}</p>}
+                  {booking.infants > 0 && <p className="text-sm font-semibold text-[var(--text-secondary)]">👶 {booking.infants} {t('Infants')}</p>}
                 </div>
               </div>
+            </motion.article>
           ))}
         </div>
       )}

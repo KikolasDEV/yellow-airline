@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { ThemeToggle } from './ThemeToggle';
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -22,53 +23,59 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="bg-yellow-airline p-4 px-8 shadow-lg flex justify-between items-center sticky top-0 z-50">
-      <Link to="/" className="flex items-center gap-2 hover:scale-105 transition-transform">
-        <span className="text-2xl font-black text-black tracking-tighter">
-          YELLOW AIRLINE <span className="text-sm align-top italic">GOLD</span>
-        </span>
-      </Link>
-      
-      <div className="flex gap-8 items-center">
-        <button 
-          onClick={toggleLanguage}
-          className="bg-black/10 hover:bg-black/20 px-3 py-1 rounded-md text-xs font-bold transition-all"
-        >
-          {isSpanish ? '🇬🇧 EN' : '🇪🇸 ES'}
-        </button>
-
-        {isLoggedIn && (
-          <span className="text-xs font-bold text-black border-r border-black/20 pr-4">
-            {t('greeting')}, {userName?.toUpperCase()} 👋
+    <nav className="sticky top-0 z-30 px-4 py-4 md:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 rounded-[1.75rem] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface-elevated)_86%,transparent_14%)] px-4 py-3 shadow-[var(--shadow-soft)] backdrop-blur-2xl md:px-6">
+        <Link to="/" className="flex items-center gap-3 transition-transform hover:scale-[1.01]">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--accent)] text-lg font-black text-slate-950 shadow-[0_16px_30px_rgba(244,197,28,0.28)]">
+            YA
           </span>
-        )}
-
-        {isLoggedIn && (
-          <Link to="/my-bookings" className="font-bold hover:text-gray-700 text-black">
-            {t("my_bookings")}
-          </Link>
-        )}
-        
-        {isLoggedIn ? (
+          <span className="text-lg font-black tracking-[-0.08em] text-[var(--text-primary)] md:text-2xl">
+            YELLOW AIRLINE <span className="text-xs align-top italic text-[var(--accent-strong)] md:text-sm">GOLD</span>
+          </span>
+        </Link>
+      
+        <div className="flex items-center gap-2 md:gap-3">
+          <ThemeToggle />
           <button 
-            onClick={handleLogout}
-            className="bg-black text-white px-6 py-2 rounded-full font-bold text-xs hover:bg-gray-800 transition-all"
+            onClick={toggleLanguage}
+            className="icon-button w-auto px-3 text-xs font-black"
           >
-            {t('logout')}
+            {isSpanish ? '🇬🇧 EN' : '🇪🇸 ES'}
           </button>
-        ) : (
-          <div className="flex gap-4 items-center">
-            <Link to="/login" className="font-bold text-black text-sm hover:underline">
-              {t('login')}
+
+          {isLoggedIn && (
+            <span className="hidden rounded-full border border-[var(--border-soft)] px-3 py-2 text-xs font-bold text-[var(--text-primary)] md:inline-flex">
+              {t('greeting')}, {userName?.toUpperCase()} 👋
+            </span>
+          )}
+
+          {isLoggedIn && (
+            <Link to="/my-bookings" className="hidden font-bold text-[var(--text-primary)] transition-colors hover:text-[var(--accent-strong)] md:inline-flex">
+              {t("my_bookings")}
             </Link>
+          )}
+        
+          {isLoggedIn ? (
             <button 
-              onClick={() => navigate('/vip')}
-              className="bg-black text-white px-6 py-2 rounded-full font-black text-xs hover:scale-105 transition-all shadow-lg shadow-black/20"
+              onClick={handleLogout}
+              className="cta-secondary px-4 py-3 text-[0.72rem]"
             >
-              {t('become_vip')}
+              {t('logout')}
             </button>
-          </div>
-        )}
+          ) : (
+            <div className="flex items-center gap-2 md:gap-3">
+              <Link to="/login" className="hidden text-sm font-bold text-[var(--text-primary)] transition-colors hover:text-[var(--accent-strong)] md:inline-flex">
+                {t('login')}
+              </Link>
+              <button 
+                onClick={() => navigate('/vip')}
+                className="cta-primary px-4 py-3 text-[0.72rem]"
+              >
+                {t('become_vip')}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );
