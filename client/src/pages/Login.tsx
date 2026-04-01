@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export const Login = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -23,23 +25,23 @@ export const Login = () => {
         navigate('/');
         toast.success("¡Hola de nuevo, " + data.user.name + "!")
       } else {
-        toast.error(data.error);
+        toast.error(data.error || 'Login failed');
       }
     } catch {
-      alert("Error de conexión con el servidor");
+      toast.error(t('login_connection_error'));
     }
   };
 
   return (
     <div className="max-w-md mx-auto py-20 px-4">
       <div className="text-center mb-10">
-        <h2 className="text-4xl font-black italic uppercase tracking-tight">Welcome Back</h2>
-        <p className="text-gray-500">Accede a tu cuenta VIP de Yellow Airline</p>
+        <h2 className="text-4xl font-black italic uppercase tracking-tight">{t('welcome_back')}</h2>
+        <p className="text-gray-500">{t('vip_access_copy')}</p>
       </div>
 
       <form onSubmit={handleLogin} className="bg-white p-10 rounded-[2.5rem] shadow-2xl border border-gray-100 flex flex-col gap-4">
         <div className="space-y-2">
-          <label className="text-xs font-bold uppercase ml-2 text-gray-400">Email</label>
+          <label className="text-xs font-bold uppercase ml-2 text-gray-400">{t('email')}</label>
           <input 
             type="email" 
             required
@@ -50,7 +52,7 @@ export const Login = () => {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-bold uppercase ml-2 text-gray-400">Contraseña</label>
+          <label className="text-xs font-bold uppercase ml-2 text-gray-400">{t('password')}</label>
           <input 
             type="password" 
             required
@@ -61,13 +63,13 @@ export const Login = () => {
         </div>
 
         <button className="w-full bg-yellow-airline text-black font-black py-5 rounded-2xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all mt-4 uppercase">
-          Despegar ✈️
+          {t('login_cta')}
         </button>
 
         <p className="text-center text-sm text-gray-500 mt-6">
-          ¿Aún no eres miembro?{' '}
+          {t('join_vip_prompt')}{' '}
           <Link to="/vip" className="text-black font-bold underline hover:text-yellow-600">
-            Únete al Club VIP
+            {t('join_vip_cta')}
           </Link>
         </p>
       </form>

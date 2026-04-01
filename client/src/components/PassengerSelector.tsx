@@ -1,27 +1,34 @@
+import { useTranslation } from 'react-i18next';
+
 interface PassengerProps {
   count: { adults: number; children: number; infants: number };
   setCount: React.Dispatch<React.SetStateAction<{ adults: number; children: number; infants: number }>>;
 }
 
 export const PassengerSelector = ({ count, setCount }: PassengerProps) => {
+  const { t } = useTranslation();
+
   const update = (type: keyof typeof count, delta: number) => {
     setCount(prev => {
       const newVal = prev[type] + delta;
       // Regla de negocio: mínimo 1 adulto, máximo 9 total, no negativos
       if (type === 'adults' && newVal < 1) return prev;
-      if (newVal < 0 || newVal > 9) return prev;
+      const nextCount = { ...prev, [type]: newVal };
+      const totalPassengers = nextCount.adults + nextCount.children + nextCount.infants;
+
+      if (newVal < 0 || newVal > 9 || totalPassengers > 9) return prev;
       return { ...prev, [type]: newVal };
     });
   };
 
   return (
     <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3 mb-4">
-      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Pasajeros</p>
+      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{t('Passengers')}</p>
       
       {[
-        { id: 'adults' as const, label: 'Adultos', sub: '+12 años' },
-        { id: 'children' as const, label: 'Niños', sub: '2-11 años' },
-        { id: 'infants' as const, label: 'Bebés', sub: '< 2 años' }
+        { id: 'adults' as const, label: t('Adultos'), sub: t('years_12_plus') },
+        { id: 'children' as const, label: t('Children'), sub: t('years_2_11') },
+        { id: 'infants' as const, label: t('Infants'), sub: t('under_2_years') }
       ].map((p) => (
         <div key={p.id} className="flex justify-between items-center">
           <div>

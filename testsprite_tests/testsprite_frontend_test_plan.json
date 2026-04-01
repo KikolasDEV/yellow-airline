@@ -1,0 +1,773 @@
+[
+  {
+    "id": "TC001",
+    "title": "Filter flights by origin and destination and view results",
+    "description": "Verifies that users can enter origin and destination filters and see a list of matching flight cards after loading completes.",
+    "category": "Flight Search And Listing",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill a common city name into the origin field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a common city name into the destination field"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the loading state to finish"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a list of flight cards is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Empty state when no flights match filters",
+    "description": "Verifies that the home page shows an empty state when the filters return no flights.",
+    "category": "Flight Search And Listing",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill a rare or unlikely city name into the origin field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a rare or unlikely city name into the destination field"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the loading state to finish"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an empty state message is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Home page handles backend fetch failure gracefully",
+    "description": "Verifies that the home page surfaces a fetch error state when flight results cannot be loaded.",
+    "category": "Flight Search And Listing",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill a common city name into the origin field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a common city name into the destination field"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the loading state to finish"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a fetch error state is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Origin-only input does not break results rendering",
+    "description": "Verifies that entering only an origin does not crash the UI and results area renders as either flights or an empty state after loading.",
+    "category": "Flight Search And Listing",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill a common city name into the origin field"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the loading state to finish"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify either flight cards are displayed or an empty state message is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Destination-only input does not break results rendering",
+    "description": "Verifies that entering only a destination does not crash the UI and results area renders as either flights or an empty state after loading.",
+    "category": "Flight Search And Listing",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill a common city name into the destination field"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the loading state to finish"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify either flight cards are displayed or an empty state message is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Clearing filters returns to unfiltered state rendering",
+    "description": "Verifies that clearing origin and destination inputs returns the listing area to a valid unfiltered state after loading.",
+    "category": "Flight Search And Listing",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill a common city name into the origin field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a common city name into the destination field"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the loading state to finish"
+      },
+      {
+        "type": "action",
+        "description": "Clear the origin field"
+      },
+      {
+        "type": "action",
+        "description": "Clear the destination field"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the loading state to finish"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the flights listing area shows a valid state such as flight cards or an empty state message"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Changing filters updates the flight list",
+    "description": "Verifies that updating the origin and destination values triggers an updated results list after loading completes.",
+    "category": "Flight Search And Listing",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill a common city name into the origin field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a common city name into the destination field"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the loading state to finish"
+      },
+      {
+        "type": "action",
+        "description": "Replace the origin field value with a different common city name"
+      },
+      {
+        "type": "action",
+        "description": "Replace the destination field value with a different common city name"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the loading state to finish"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the flight cards reflect the updated filter state by showing a valid list or an empty state message"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Home page initial load renders primary search UI",
+    "description": "Verifies that the home page loads and shows the origin and destination search inputs.",
+    "category": "Flight Search And Listing",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify origin and destination search inputs are visible"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Successful VIP registration redirects to login",
+    "description": "Verifies that a new user can submit valid signup data and is routed to the login page on success.",
+    "category": "VIP Registration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /vip"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid full name into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a unique email value into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid passport value into the passport field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the login page"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "VIP registration shows field validation for incomplete submission",
+    "description": "Verifies that submitting the VIP registration form with missing values shows validation errors.",
+    "category": "VIP Registration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /vip"
+      },
+      {
+        "type": "action",
+        "description": "Leave the registration fields empty"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation errors are visible for the invalid fields"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "VIP registration shows field validation for invalid email format",
+    "description": "Verifies that entering an invalid email surfaces an email validation error on submission.",
+    "category": "VIP Registration",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /vip"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid full name into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill an invalid email format into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid passport value into the passport field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an email validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "VIP registration duplicate email error",
+    "description": "Verifies that attempting to register with an already-registered email shows a duplicate email error state.",
+    "category": "VIP Registration",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /vip"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid full name into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill an email value that is already registered into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid passport value into the passport field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a duplicate email error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "VIP registration page loads primary signup form",
+    "description": "Verifies that the VIP registration page loads and displays the registration form fields.",
+    "category": "VIP Registration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /vip"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the VIP registration form is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "VIP registration password required validation",
+    "description": "Verifies that leaving the password empty shows a validation error on submission.",
+    "category": "VIP Registration",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /vip"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid full name into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a unique email value into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid passport value into the passport field"
+      },
+      {
+        "type": "action",
+        "description": "Leave the password field empty"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a password validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Successful VIP login navigates to home",
+    "description": "Verifies that a VIP user can log in with valid credentials and is routed to the home page.",
+    "category": "VIP Login",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the home page"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Invalid VIP login shows error toast",
+    "description": "Verifies that submitting incorrect credentials shows an authentication error toast.",
+    "category": "VIP Login",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid email format into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill an incorrect password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an invalid credentials error toast is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "VIP login page loads primary login form",
+    "description": "Verifies that the login page loads and displays the email and password inputs.",
+    "category": "VIP Login",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the login form is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "VIP login requires email and password validation",
+    "description": "Verifies that submitting the login form with empty fields shows validation errors.",
+    "category": "VIP Login",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Leave the email field empty"
+      },
+      {
+        "type": "action",
+        "description": "Leave the password field empty"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation errors are visible for the invalid fields"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "VIP login invalid email format validation",
+    "description": "Verifies that entering an invalid email format prevents successful submission and surfaces a validation error.",
+    "category": "VIP Login",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill an invalid email format into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a password value into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an email validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Unauthenticated booking attempt is blocked with login-required feedback",
+    "description": "Verifies that a user who is not logged in cannot submit a flight booking and is shown a login-required error state.",
+    "category": "Flight Booking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Adjust passenger counts for adults, children, or infants"
+      },
+      {
+        "type": "action",
+        "description": "Click the booking button on a flight card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a login-required error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Authenticated user can book a flight and see a success confirmation",
+    "description": "Verifies the end-to-end booking submission path for a logged-in VIP user from the home page results in a visible success confirmation.",
+    "category": "Flight Booking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to return to the home page"
+      },
+      {
+        "type": "action",
+        "description": "Adjust passenger counts for adults, children, or infants"
+      },
+      {
+        "type": "action",
+        "description": "Click the booking button on a flight card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a success confirmation is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Passenger selector enforces minimum one adult",
+    "description": "Verifies the UI prevents selecting a booking with zero adults via the passenger selector constraint.",
+    "category": "Flight Booking",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Adjust passenger counts to set adults to zero"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an adult count validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "My Bookings page loads and shows bookings list or empty state for authenticated user",
+    "description": "Verifies that an authenticated VIP user can open My Bookings and see either their bookings list or an empty state after loading completes.",
+    "category": "My Bookings View",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the My Bookings link from the navbar"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the bookings list to load"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify booked flights are displayed or an empty state message is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "Unauthenticated access to My Bookings shows an auth-related error or empty state",
+    "description": "Verifies the observable UI outcome when visiting My Bookings without being logged in (auth error or inconsistent empty state).",
+    "category": "My Bookings View",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /my-bookings"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the bookings list to load"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an authentication error is visible or an empty state message is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "Language toggle switches the interface language from the navbar",
+    "description": "Verifies that toggling language updates visible labels across the interface.",
+    "category": "Language Toggle",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the language toggle button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify translated labels are updated across the interface"
+      }
+    ]
+  },
+  {
+    "id": "TC026",
+    "title": "Language toggle can be switched back to the original language",
+    "description": "Verifies that users can toggle the language twice and the UI returns to the original language state.",
+    "category": "Language Toggle",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the language toggle button"
+      },
+      {
+        "type": "action",
+        "description": "Click the language toggle button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the interface labels match the original language state"
+      }
+    ]
+  },
+  {
+    "id": "TC027",
+    "title": "Home page flight discovery surface remains usable after language toggle",
+    "description": "Verifies that after changing language, core home page content for flight discovery remains visible and usable.",
+    "category": "Language Toggle",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the language toggle button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify flights are visible"
+      }
+    ]
+  }
+]

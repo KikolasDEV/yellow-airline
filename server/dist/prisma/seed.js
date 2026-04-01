@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 async function main() {
     console.log('✈️ Iniciando el seeding de Yellow Airline...');
@@ -6,19 +7,33 @@ async function main() {
     // Es importante borrar primero Bookings si existen por la integridad referencial
     await prisma.booking.deleteMany();
     await prisma.flight.deleteMany();
+    await prisma.user.deleteMany();
     // 2. Lista de vuelos sin el campo 'number' y añadiendo 'capacity'
     const flights = [
         { origin: 'Madrid', destination: 'Barcelona', departureTime: new Date('2026-05-10T10:00:00Z'), price: 45.99, capacity: 180 },
+        { origin: 'Madrid', destination: 'Paris', departureTime: new Date('2026-05-10T13:15:00Z'), price: 99.99, capacity: 180 },
         { origin: 'Barcelona', destination: 'Paris', departureTime: new Date('2026-05-10T15:30:00Z'), price: 89.50, capacity: 180 },
         { origin: 'Sevilla', destination: 'Londres', departureTime: new Date('2026-05-11T08:00:00Z'), price: 120.00, capacity: 150 },
         { origin: 'Madrid', destination: 'Roma', departureTime: new Date('2026-05-12T12:00:00Z'), price: 65.25, capacity: 180 },
         { origin: 'Valencia', destination: 'Berlín', departureTime: new Date('2026-05-13T18:45:00Z'), price: 95.00, capacity: 180 },
         { origin: 'Madrid', destination: 'Tokio', departureTime: new Date('2026-06-01T22:00:00Z'), price: 550.00, capacity: 300 }, // Avión más grande para largo radio
     ];
+    const createdFlights = [];
     for (const flight of flights) {
-        await prisma.flight.create({ data: flight });
+        const createdFlight = await prisma.flight.create({ data: flight });
+        createdFlights.push(createdFlight);
     }
-    console.log(`✅ Seeding completado: ${flights.length} vuelos creados.`);
+    const hashedPassword = await bcrypt.hash('testing123', 10);
+    const seededUser = await prisma.user.create({
+        data: {
+            name: 'Kiko Tester',
+            email: 'kiko@gmail.com',
+            passport: 'TEST12345',
+            password: hashedPassword,
+            isVip: true,
+        },
+    });
+    console.log(`✅ Seeding completado: ${flights.length} vuelos creados y usuario de prueba listo.`);
 }
 main()
     .catch((e) => {

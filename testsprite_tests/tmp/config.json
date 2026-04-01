@@ -1,0 +1,20 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:5173",
+  "loginUser": "kiko@gmail.com",
+  "loginPassword": "testing123",
+  "executionArgs": {
+    "projectName": "yellow-airline",
+    "projectPath": "C:\\Users\\User\\Desktop\\Office\\WORKSPACES\\WebDevelopment\\yellow-airline",
+    "testIds": [],
+    "additionalInstruction": "Re-run the highest-value frontend scenarios after fixes. Prioritize search results, VIP registration redirect, login success and error handling, unauthenticated booking guard, authenticated booking success, my bookings access, and language toggle coverage against localhost:5173 with backend available on localhost:5000.",
+    "serverMode": "production",
+    "envs": {
+      "API_KEY": "sk-user-BZMa0a9gfH13a8PHs38yZZtCaaooE2GG4MaI44o2CwzISnnLaAKOU34CNqk1vq2pzMusCWtdhEjsaBnIhLdidDMaPuebivc0--aYpxTGRRCBu5r1iDqTCI77CjCwSmmro_o"
+    }
+  },
+  "serverPort": 59388,
+  "proxy": "http://1b05550c-006d-4e3e-889b-da0718c30d1e:4ERaOk5AbCPhjfJ5lpE8pMmCfEy6YTHp@tun.testsprite.com:8080"
+}

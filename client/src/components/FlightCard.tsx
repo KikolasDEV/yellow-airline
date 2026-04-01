@@ -10,6 +10,7 @@ interface Props {
 
 export const FlightCard = ({ flight }: Props) => {
   const { t, i18n } = useTranslation();
+  const isSpanish = i18n.resolvedLanguage?.startsWith('es') ?? i18n.language.startsWith('es');
   
   // Estado para el desglose de pasajeros
   const [passengers, setPassengers] = useState({ 
@@ -19,7 +20,7 @@ export const FlightCard = ({ flight }: Props) => {
   });
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', {
+    return new Date(dateString).toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', {
       day: '2-digit',
       month: 'short',
       hour: '2-digit',
@@ -31,7 +32,7 @@ export const FlightCard = ({ flight }: Props) => {
     const token = localStorage.getItem('token');
     
     if (!token) {
-      toast.error(t("🔒 Debes ser miembro VIP para reservar"), {
+      toast.error(t('members_only_booking'), {
         style: { borderRadius: '10px', background: '#333', color: '#fff' }
       });
       return;
@@ -60,10 +61,10 @@ export const FlightCard = ({ flight }: Props) => {
         });
       } else {
         // Mostramos el error específico del backend (ej: "Ya tienes este vuelo")
-        toast.error(data.error || t("No se pudo procesar la reserva"));
+        toast.error(data.error || t('booking_failed'));
       }
     } catch {
-      toast.error(t("Fallo de conexión con la aerolínea"));
+      toast.error(t('booking_connection_error'));
     }
   };
 

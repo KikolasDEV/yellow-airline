@@ -4,20 +4,20 @@ import { useTranslation } from 'react-i18next';
 
 export const Navbar = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const isLoggedIn = !!localStorage.getItem('token');
   const userName = localStorage.getItem('userName');
+  const isSpanish = i18n.resolvedLanguage?.startsWith('es') ?? i18n.language.startsWith('es');
 
   const handleLogout = () => {
     localStorage.clear();
-    toast.success("Sesión cerrada. ¡Vuelve pronto!");
+    toast.success(t('logout_success'));
     navigate('/');
     window.location.reload(); // Recarga limpia de estado
   };
 
-  const { t, i18n } = useTranslation();
-
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'es' ? 'en' : 'es';
+    const newLang = isSpanish ? 'en' : 'es';
     i18n.changeLanguage(newLang);
   };
 
@@ -34,12 +34,12 @@ export const Navbar = () => {
           onClick={toggleLanguage}
           className="bg-black/10 hover:bg-black/20 px-3 py-1 rounded-md text-xs font-bold transition-all"
         >
-          {i18n.language === 'es' ? '🇬🇧 EN' : '🇪🇸 ES'}
+          {isSpanish ? '🇬🇧 EN' : '🇪🇸 ES'}
         </button>
 
         {isLoggedIn && (
           <span className="text-xs font-bold text-black border-r border-black/20 pr-4">
-            HOLA, {userName?.toUpperCase()} 👋
+            {t('greeting')}, {userName?.toUpperCase()} 👋
           </span>
         )}
 
@@ -54,18 +54,18 @@ export const Navbar = () => {
             onClick={handleLogout}
             className="bg-black text-white px-6 py-2 rounded-full font-bold text-xs hover:bg-gray-800 transition-all"
           >
-            LOGOUT
+            {t('logout')}
           </button>
         ) : (
           <div className="flex gap-4 items-center">
             <Link to="/login" className="font-bold text-black text-sm hover:underline">
-              Login
+              {t('login')}
             </Link>
             <button 
               onClick={() => navigate('/vip')}
               className="bg-black text-white px-6 py-2 rounded-full font-black text-xs hover:scale-105 transition-all shadow-lg shadow-black/20"
             >
-              BECOME VIP ⭐
+              {t('become_vip')}
             </button>
           </div>
         )}
