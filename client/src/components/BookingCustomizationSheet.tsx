@@ -220,17 +220,19 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
                     <p className="mt-2 leading-7">{t('booking_cabin_note_copy')}</p>
                   </div>
 
-                  <div className="summary-total">
-                    <span>{t('booking_total_estimated')}</span>
-                    <strong>{totalPrice.toFixed(2)}€</strong>
-                  </div>
+                  <div className="summary-actions">
+                    <div className="summary-total">
+                      <span>{t('booking_total_estimated')}</span>
+                      <strong>{totalPrice.toFixed(2)}€</strong>
+                    </div>
 
-                  <button type="button" className="cta-primary w-full justify-center" disabled={!canConfirm || isSubmitting} onClick={handleConfirm}>
-                    {isSubmitting ? t('booking_confirming') : t('booking_confirm')}
-                  </button>
-                  {!canConfirm && (
-                    <p className="text-sm text-[var(--text-secondary)]">{t('booking_missing_seats')}</p>
-                  )}
+                    <button type="button" className="cta-primary w-full justify-center" disabled={!canConfirm || isSubmitting} onClick={handleConfirm}>
+                      {isSubmitting ? t('booking_confirming') : t('booking_confirm')}
+                    </button>
+                    {!canConfirm && (
+                      <p className="text-sm text-[var(--text-secondary)]">{t('booking_missing_seats')}</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

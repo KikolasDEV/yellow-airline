@@ -514,6 +514,7 @@ textarea {
   border-radius: 2.25rem;
   background: var(--surface-elevated);
   padding: 1.25rem;
+  padding-bottom: 1.75rem;
   box-shadow: var(--shadow-strong);
 }
 
@@ -670,6 +671,17 @@ textarea {
   padding-top: 1rem;
   font-size: 1.1rem;
   font-weight: 900;
+}
+
+.summary-actions {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 0.25rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface-elevated) 10%, transparent 90%) 0%, var(--surface-elevated) 24%, var(--surface-elevated) 100%);
 }
 
 .booking-chip {

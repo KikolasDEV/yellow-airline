@@ -63,7 +63,7 @@ export const PersonalizedOffersCarousel = ({ offers, topDestination, onApplyOffe
                   <span className="promo-badge promo-badge-contrast">{activeOffer.discountLabel}</span>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-3xl font-black tracking-tight md:text-4xl">{t(activeOffer.titleKey)}</h3>
+                  <p className="text-3xl font-black tracking-tight md:text-4xl">{t(activeOffer.titleKey)}</p>
                   <p className="max-w-2xl text-sm leading-6 text-white/78 md:text-base">{t(activeOffer.descriptionKey)}</p>
                 </div>
                 <AnimatedRoute origin={activeOffer.originPreset ?? 'Madrid'} destination={activeOffer.destinationPreset ?? activeOffer.country} />
