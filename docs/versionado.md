@@ -89,7 +89,7 @@ docs: document testing strategy
 
 ## Secretos requeridos
 
-- `GEMINI_API_KEY`: usado para generar notas de release personalizadas con `gemini-3-flash`.
+- `GEMINI_API_KEY`: usado para generar notas de release personalizadas con `gemini-pro-latest`.
 - Si no existe este secreto, Release Please seguira funcionando, pero no se reescribiran notas con IA.
 
 ## Nota operativa importante

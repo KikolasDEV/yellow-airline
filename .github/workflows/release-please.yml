@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_MODEL: gemini-pro-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -47,7 +48,7 @@ jobs:
             COMMITS='- Sin cambios detectados en el rango de tags.'
           fi
 
-          RESPONSE=$(curl -sS "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key=$GEMINI_API_KEY" \
+          RESPONSE=$(curl -sS "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent?key=$GEMINI_API_KEY" \
             -H "Content-Type: application/json" \
             -d "$(jq -n --arg tag "$TAG" --arg commits "$COMMITS" '{
               contents: [
@@ -92,7 +93,7 @@ jobs:
             COMMITS='- Sin cambios detectados en el rango de tags.'
           fi
 
-          RESPONSE=$(curl -sS "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key=$GEMINI_API_KEY" \
+          RESPONSE=$(curl -sS "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent?key=$GEMINI_API_KEY" \
             -H "Content-Type: application/json" \
             -d "$(jq -n --arg tag "$TAG" --arg commits "$COMMITS" '{
               contents: [
