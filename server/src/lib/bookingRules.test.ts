@@ -4,6 +4,7 @@ import {
   calculateRequestedSeats,
   hasDuplicateBooking,
   hasEnoughCapacity,
+  normalizeFlightId,
   normalizePassengerCount,
 } from './bookingRules.js';
 
@@ -45,5 +46,11 @@ describe('bookingRules', () => {
     expect(normalizePassengerCount(-2)).toBe(0);
     expect(normalizePassengerCount(3.9)).toBe(3);
     expect(normalizePassengerCount(Number.NaN)).toBe(0);
+  });
+
+  it('normalizes flight id to a non-negative integer', () => {
+    expect(normalizeFlightId(42.7)).toBe(42);
+    expect(normalizeFlightId(-8)).toBe(0);
+    expect(normalizeFlightId(Number.NaN)).toBe(0);
   });
 });
