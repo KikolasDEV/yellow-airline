@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "include-v-in-tag": false,
+  "separate-pull-requests": true,
+  "packages": {
+    "client": {
+      "release-type": "node",
+      "package-name": "client"
+    },
+    "server": {
+      "release-type": "node",
+      "package-name": "server"
+    }
+  }
+}

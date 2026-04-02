@@ -1,6 +1,12 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { authenticateToken } from '../middleware/auth.js';
+import {
+  calculateCurrentSeats,
+  calculateRequestedSeats,
+  hasDuplicateBooking,
+  hasEnoughCapacity,
+} from '../lib/bookingRules.js';
 
 const router = Router();
 
@@ -27,7 +33,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
       where: { userId_flightId: { userId, flightId } }
     });
 
-    if (existingBooking) {
+    if (hasDuplicateBooking(existingBooking)) {
       return res.status(400).json({ error: "Ya tienes una reserva para este vuelo." });
     }
 
@@ -42,10 +48,14 @@ router.post('/', authenticateToken, async (req: any, res) => {
       _sum: { adults: true, children: true }
     });
 
-    const currentSeats = (totalOccupied._sum.adults || 0) + (totalOccupied._sum.children || 0);
-    const requestedSeats = Number(adults) + Number(children);
+    const currentSeats = calculateCurrentSeats(totalOccupied._sum.adults || 0, totalOccupied._sum.children || 0);
+    const requestedSeats = calculateRequestedSeats(Number(adults), Number(children));
 
-    if (currentSeats + requestedSeats > (flight?.capacity || 0)) {
+    if (!hasEnoughCapacity({
+      currentSeats,
+      requestedSeats,
+      capacity: flight?.capacity || 0,
+    })) {
       return res.status(400).json({ error: "Vuelo completo. No hay suficientes asientos." });
     }
 

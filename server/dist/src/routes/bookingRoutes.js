@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { authenticateToken } from '../middleware/auth.js';
+import { calculateCurrentSeats, calculateRequestedSeats, hasDuplicateBooking, hasEnoughCapacity, } from '../lib/bookingRules.js';
 const router = Router();
 router.get('/my-bookings', authenticateToken, async (req, res) => {
     try {
@@ -23,7 +24,7 @@ router.post('/', authenticateToken, async (req, res) => {
         const existingBooking = await prisma.booking.findUnique({
             where: { userId_flightId: { userId, flightId } }
         });
-        if (existingBooking) {
+        if (hasDuplicateBooking(existingBooking)) {
             return res.status(400).json({ error: "Ya tienes una reserva para este vuelo." });
         }
         // 2. Verificar disponibilidad de asientos
@@ -35,9 +36,13 @@ router.post('/', authenticateToken, async (req, res) => {
             where: { flightId },
             _sum: { adults: true, children: true }
         });
-        const currentSeats = (totalOccupied._sum.adults || 0) + (totalOccupied._sum.children || 0);
-        const requestedSeats = Number(adults) + Number(children);
-        if (currentSeats + requestedSeats > (flight?.capacity || 0)) {
+        const currentSeats = calculateCurrentSeats(totalOccupied._sum.adults || 0, totalOccupied._sum.children || 0);
+        const requestedSeats = calculateRequestedSeats(Number(adults), Number(children));
+        if (!hasEnoughCapacity({
+            currentSeats,
+            requestedSeats,
+            capacity: flight?.capacity || 0,
+        })) {
             return res.status(400).json({ error: "Vuelo completo. No hay suficientes asientos." });
         }
         // 3. Crear reserva con desglose
