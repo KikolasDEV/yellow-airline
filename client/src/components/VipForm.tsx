@@ -5,18 +5,19 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
-const vipSchema = z.object({
-  name: z.string().min(2, 'El nombre es muy corto'),
-  email: z.string().email('Email inválido'),
-  passport: z.string().min(5, 'Pasaporte requerido para estatus VIP'),
-  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+const createVipSchema = (t: (key: string) => string) => z.object({
+  name: z.string().min(2, t('validation_name_short')),
+  email: z.string().email(t('validation_email_invalid')),
+  passport: z.string().min(5, t('validation_passport_required')),
+  password: z.string().min(6, t('validation_password_short')),
 });
 
-type VipFormData = z.infer<typeof vipSchema>;
+type VipFormData = z.infer<ReturnType<typeof createVipSchema>>;
 
 export const VipForm = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const vipSchema = createVipSchema(t);
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<VipFormData>({
     resolver: zodResolver(vipSchema),
@@ -30,14 +31,14 @@ export const VipForm = () => {
         body: JSON.stringify(data),
       });
 
-      const result = await response.json();
+      await response.json();
 
       if (response.ok) {
         toast.success(t('vip_register_success'));
         reset();
         navigate('/login');
       } else {
-        toast.error(result.error || t('vip_register_error'));
+        toast.error(t('vip_register_error'));
       }
     } catch (error) {
       console.error('Fallo de red en Yellow Airline:', error);
@@ -47,6 +48,17 @@ export const VipForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-left">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="rounded-[1.35rem] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface-elevated)_84%,transparent_16%)] p-4">
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('vip_profile_note')}</p>
+          <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{t('vip_profile_note_copy')}</p>
+        </div>
+        <div className="rounded-[1.35rem] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface-elevated)_84%,transparent_16%)] p-4">
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('vip_secure_note')}</p>
+          <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{t('vip_secure_note_copy')}</p>
+        </div>
+      </div>
+
       <label className="block space-y-2">
         <span className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('full_name')}</span>
         <input {...register('name')} className="input-shell" />
@@ -73,7 +85,7 @@ export const VipForm = () => {
         </label>
       </div>
 
-      <button type="submit" className="cta-primary w-full justify-center">{t('vip_submit')}</button>
+      <button type="submit" className="cta-primary w-full justify-center sm:w-auto sm:min-w-[240px]">{t('vip_submit')}</button>
     </form>
   );
 };
