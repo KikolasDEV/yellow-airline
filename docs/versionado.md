@@ -89,7 +89,7 @@ docs: document testing strategy
 
 ## Secretos requeridos
 
-- `OPENAI_API_KEY`: usado para generar notas de release personalizadas con `gpt-4o-mini`.
+- `GEMINI_API_KEY`: usado para generar notas de release personalizadas con `gemini-3-flash`.
 - Si no existe este secreto, Release Please seguira funcionando, pero no se reescribiran notas con IA.
 
 ## Nota operativa importante

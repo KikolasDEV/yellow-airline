@@ -10,6 +10,16 @@ export const normalizePassengerCount = (value: number) => {
   return toNonNegativeInt(value);
 };
 
+export const normalizeFlightId = (value: number) => {
+  const normalizedValue = Number(value);
+
+  if (!Number.isFinite(normalizedValue)) {
+    return 0;
+  }
+
+  return Math.max(0, Math.floor(normalizedValue));
+};
+
 export const calculateRequestedSeats = (adults: number, children: number) => {
   return normalizePassengerCount(adults) + normalizePassengerCount(children);
 };

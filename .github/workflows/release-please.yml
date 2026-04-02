@@ -13,7 +13,7 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,14 +28,14 @@ jobs:
           manifest-file: .release-please-manifest.json
 
       - name: Generate AI release notes for client
-        if: ${{ steps.release.outputs['client--release_created'] == 'true' && env.OPENAI_API_KEY != '' }}
+        if: ${{ steps.release.outputs['client--release_created'] == 'true' && env.GEMINI_API_KEY != '' }}
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.release.outputs['client--tag_name'] }}
         run: |
           git fetch --tags --force
 
-          PREV_TAG=$(git tag --list 'client-v*' --sort=-creatordate | grep -vx "$TAG" | head -n 1 || true)
+          PREV_TAG=$(git tag --list 'client-*' --sort=-creatordate | grep -vx "$TAG" | head -n 1 || true)
 
           if [ -n "$PREV_TAG" ]; then
             COMMITS=$(git log --pretty=format:'- %s (%h)' "$PREV_TAG..$TAG")
@@ -47,38 +47,40 @@ jobs:
             COMMITS='- Sin cambios detectados en el rango de tags.'
           fi
 
-          RESPONSE=$(curl -sS https://api.openai.com/v1/chat/completions \
-            -H "Authorization: Bearer $OPENAI_API_KEY" \
+          RESPONSE=$(curl -sS "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key=$GEMINI_API_KEY" \
             -H "Content-Type: application/json" \
             -d "$(jq -n --arg tag "$TAG" --arg commits "$COMMITS" '{
-              model: "gpt-4o-mini",
-              messages: [
+              contents: [
                 {
                   role: "user",
-                  content: ("Eres un redactor tecnico experto. A partir de la lista de cambios que te proporciono, genera notas de release en castellano, bien estructuradas y profesionales. Incluye: un resumen breve de 1-2 lineas al inicio, y secciones para Nuevas funcionalidades, Correcciones de bugs, y Otros cambios. Usa un tono cercano pero profesional.\n\nGenera las notas de release para la version " + $tag + " basandote en los siguientes cambios:\n\n" + $commits)
+                  parts: [
+                    {
+                      text: ("Eres un redactor tecnico experto. A partir de la lista de cambios que te proporciono, genera notas de release en castellano, bien estructuradas y profesionales. Incluye: un resumen breve de 1-2 lineas al inicio, y secciones para Nuevas funcionalidades, Correcciones de bugs, y Otros cambios. Usa un tono cercano pero profesional.\n\nGenera las notas de release para la version " + $tag + " basandote en los siguientes cambios:\n\n" + $commits)
+                    }
+                  ]
                 }
               ]
             }')")
 
-          NOTES=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+          NOTES=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts | map(.text) | join("\n") // empty')
 
           if [ -z "$NOTES" ]; then
-            echo "No se pudieron generar notas para $TAG"
+            echo "No se pudieron generar notas para $TAG con Gemini. Se mantienen notas por defecto."
             echo "$RESPONSE"
-            exit 1
+            exit 0
           fi
 
           gh release edit "$TAG" --notes "$NOTES"
 
       - name: Generate AI release notes for server
-        if: ${{ steps.release.outputs['server--release_created'] == 'true' && env.OPENAI_API_KEY != '' }}
+        if: ${{ steps.release.outputs['server--release_created'] == 'true' && env.GEMINI_API_KEY != '' }}
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.release.outputs['server--tag_name'] }}
         run: |
           git fetch --tags --force
 
-          PREV_TAG=$(git tag --list 'server-v*' --sort=-creatordate | grep -vx "$TAG" | head -n 1 || true)
+          PREV_TAG=$(git tag --list 'server-*' --sort=-creatordate | grep -vx "$TAG" | head -n 1 || true)
 
           if [ -n "$PREV_TAG" ]; then
             COMMITS=$(git log --pretty=format:'- %s (%h)' "$PREV_TAG..$TAG")
@@ -90,25 +92,27 @@ jobs:
             COMMITS='- Sin cambios detectados en el rango de tags.'
           fi
 
-          RESPONSE=$(curl -sS https://api.openai.com/v1/chat/completions \
-            -H "Authorization: Bearer $OPENAI_API_KEY" \
+          RESPONSE=$(curl -sS "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key=$GEMINI_API_KEY" \
             -H "Content-Type: application/json" \
             -d "$(jq -n --arg tag "$TAG" --arg commits "$COMMITS" '{
-              model: "gpt-4o-mini",
-              messages: [
+              contents: [
                 {
                   role: "user",
-                  content: ("Eres un redactor tecnico experto. A partir de la lista de cambios que te proporciono, genera notas de release en castellano, bien estructuradas y profesionales. Incluye: un resumen breve de 1-2 lineas al inicio, y secciones para Nuevas funcionalidades, Correcciones de bugs, y Otros cambios. Usa un tono cercano pero profesional.\n\nGenera las notas de release para la version " + $tag + " basandote en los siguientes cambios:\n\n" + $commits)
+                  parts: [
+                    {
+                      text: ("Eres un redactor tecnico experto. A partir de la lista de cambios que te proporciono, genera notas de release en castellano, bien estructuradas y profesionales. Incluye: un resumen breve de 1-2 lineas al inicio, y secciones para Nuevas funcionalidades, Correcciones de bugs, y Otros cambios. Usa un tono cercano pero profesional.\n\nGenera las notas de release para la version " + $tag + " basandote en los siguientes cambios:\n\n" + $commits)
+                    }
+                  ]
                 }
               ]
             }')")
 
-          NOTES=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+          NOTES=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts | map(.text) | join("\n") // empty')
 
           if [ -z "$NOTES" ]; then
-            echo "No se pudieron generar notas para $TAG"
+            echo "No se pudieron generar notas para $TAG con Gemini. Se mantienen notas por defecto."
             echo "$RESPONSE"
-            exit 1
+            exit 0
           fi
 
           gh release edit "$TAG" --notes "$NOTES"

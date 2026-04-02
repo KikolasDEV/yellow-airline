@@ -6,6 +6,7 @@ import {
   calculateRequestedSeats,
   hasDuplicateBooking,
   hasEnoughCapacity,
+  normalizeFlightId,
   normalizePassengerCount,
 } from '../lib/bookingRules.js';
 
@@ -26,12 +27,13 @@ router.get('/my-bookings', authenticateToken, async (req: any, res) => {
 // POST: Crear una reserva (Solo usuarios logueados)
 router.post('/', authenticateToken, async (req: any, res) => {
   const { flightId, adults, children, infants } = req.body;
+  const normalizedFlightId = normalizeFlightId(Number(flightId));
   const userId = req.user.userId;
 
   try {
     // 1. Verificar si ya tiene ESTE vuelo (Evitar duplicados)
     const existingBooking = await prisma.booking.findUnique({
-      where: { userId_flightId: { userId, flightId } }
+      where: { userId_flightId: { userId, flightId: normalizedFlightId } }
     });
 
     if (hasDuplicateBooking(existingBooking)) {
@@ -40,12 +42,12 @@ router.post('/', authenticateToken, async (req: any, res) => {
 
     // 2. Verificar disponibilidad de asientos
     const flight = await prisma.flight.findUnique({
-      where: { id: flightId },
+      where: { id: normalizedFlightId },
       include: { _count: { select: { bookings: true } } } // Esto es ultra eficiente
     });
 
     const totalOccupied = await prisma.booking.aggregate({
-      where: { flightId },
+      where: { flightId: normalizedFlightId },
       _sum: { adults: true, children: true }
     });
 
@@ -67,7 +69,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
     const newBooking = await prisma.booking.create({
       data: {
         userId,
-        flightId,
+        flightId: normalizedFlightId,
         adults: normalizedAdults,
         children: normalizedChildren,
         infants: normalizedInfants,
