@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/KikolasDEV/yellow-airline/compare/server-1.1.5...server-1.2.0) (2026-04-02)
+
+
+### Features
+
+* add dynamic pricing, Stripe checkout, and boarding pass flow ([32d31f5](https://github.com/KikolasDEV/yellow-airline/commit/32d31f55c14e3fde8b5d9ba55e86d0f5c073c99c))
+
+
+### Bug Fixes
+
+* **server:** load env variables before starting routes ([94c568b](https://github.com/KikolasDEV/yellow-airline/commit/94c568b768819dcb5040bafc13e4f5d77de64815))
+
 ## [1.1.5](https://github.com/KikolasDEV/yellow-airline/compare/server-1.1.4...server-1.1.5) (2026-04-02)
 
 
