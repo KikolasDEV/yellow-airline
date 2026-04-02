@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/KikolasDEV/yellow-airline/compare/server-1.1.1...server-1.1.2) (2026-04-02)
+
+
+### Bug Fixes
+
+* **server:** normalize flight id in booking flow ([09b02dd](https://github.com/KikolasDEV/yellow-airline/commit/09b02dde710cc03b707ed5e56abf2f270d6396de))
+
 ## [1.1.1](https://github.com/KikolasDEV/yellow-airline/compare/server-1.1.0...server-1.1.1) (2026-04-02)
 
 
