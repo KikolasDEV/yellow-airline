@@ -10,7 +10,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  release-please:
+  release-please-client:
     runs-on: ubuntu-latest
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -21,12 +21,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run release-please
+      - name: Run release-please for client
         id: release
         uses: googleapis/release-please-action@v4
         with:
-          config-file: release-please-config.json
-          manifest-file: .release-please-manifest.json
+          config-file: release-please-client-config.json
+          manifest-file: .release-please-manifest-client.json
 
       - name: Generate AI release notes for client
         if: ${{ steps.release.outputs['client--release_created'] == 'true' && env.GEMINI_API_KEY != '' }}
@@ -72,6 +72,24 @@ jobs:
           fi
 
           gh release edit "$TAG" --notes "$NOTES"
+
+  release-please-server:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_MODEL: gemini-2.5-flash
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run release-please for server
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-server-config.json
+          manifest-file: .release-please-manifest-server.json
 
       - name: Generate AI release notes for server
         if: ${{ steps.release.outputs['server--release_created'] == 'true' && env.GEMINI_API_KEY != '' }}
