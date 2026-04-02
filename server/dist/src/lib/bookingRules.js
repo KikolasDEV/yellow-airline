@@ -4,11 +4,14 @@ const toNonNegativeInt = (value) => {
     }
     return Math.max(0, Math.floor(value));
 };
+export const normalizePassengerCount = (value) => {
+    return toNonNegativeInt(value);
+};
 export const calculateRequestedSeats = (adults, children) => {
-    return toNonNegativeInt(adults) + toNonNegativeInt(children);
+    return normalizePassengerCount(adults) + normalizePassengerCount(children);
 };
 export const calculateCurrentSeats = (occupiedAdults, occupiedChildren) => {
-    return toNonNegativeInt(occupiedAdults) + toNonNegativeInt(occupiedChildren);
+    return normalizePassengerCount(occupiedAdults) + normalizePassengerCount(occupiedChildren);
 };
 export const hasDuplicateBooking = (existingBooking) => {
     return existingBooking !== null && existingBooking !== undefined;

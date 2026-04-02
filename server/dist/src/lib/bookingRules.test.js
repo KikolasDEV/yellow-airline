@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateCurrentSeats, calculateRequestedSeats, hasDuplicateBooking, hasEnoughCapacity, } from './bookingRules.js';
+import { calculateCurrentSeats, calculateRequestedSeats, hasDuplicateBooking, hasEnoughCapacity, normalizePassengerCount, } from './bookingRules.js';
 describe('bookingRules', () => {
     it('calculates requested seats using only adults and children', () => {
         expect(calculateRequestedSeats(2, 1)).toBe(3);
@@ -27,6 +27,11 @@ describe('bookingRules', () => {
     });
     it('calculates current occupied seats from adults and children sums', () => {
         expect(calculateCurrentSeats(30, 8)).toBe(38);
+    });
+    it('normalizes invalid or negative passenger counts to non-negative integers', () => {
+        expect(normalizePassengerCount(-2)).toBe(0);
+        expect(normalizePassengerCount(3.9)).toBe(3);
+        expect(normalizePassengerCount(Number.NaN)).toBe(0);
     });
 });
 //# sourceMappingURL=bookingRules.test.js.map

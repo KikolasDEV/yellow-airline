@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { authenticateToken } from '../middleware/auth.js';
-import { calculateCurrentSeats, calculateRequestedSeats, hasDuplicateBooking, hasEnoughCapacity, } from '../lib/bookingRules.js';
+import { calculateCurrentSeats, calculateRequestedSeats, hasDuplicateBooking, hasEnoughCapacity, normalizePassengerCount, } from '../lib/bookingRules.js';
 const router = Router();
 router.get('/my-bookings', authenticateToken, async (req, res) => {
     try {
@@ -38,6 +38,9 @@ router.post('/', authenticateToken, async (req, res) => {
         });
         const currentSeats = calculateCurrentSeats(totalOccupied._sum.adults || 0, totalOccupied._sum.children || 0);
         const requestedSeats = calculateRequestedSeats(Number(adults), Number(children));
+        const normalizedAdults = normalizePassengerCount(Number(adults));
+        const normalizedChildren = normalizePassengerCount(Number(children));
+        const normalizedInfants = normalizePassengerCount(Number(infants));
         if (!hasEnoughCapacity({
             currentSeats,
             requestedSeats,
@@ -50,9 +53,9 @@ router.post('/', authenticateToken, async (req, res) => {
             data: {
                 userId,
                 flightId,
-                adults: Number(adults),
-                children: Number(children),
-                infants: Number(infants)
+                adults: normalizedAdults,
+                children: normalizedChildren,
+                infants: normalizedInfants,
             }
         });
         res.status(201).json(newBooking);

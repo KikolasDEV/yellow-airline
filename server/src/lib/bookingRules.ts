@@ -6,12 +6,16 @@ const toNonNegativeInt = (value: number) => {
   return Math.max(0, Math.floor(value));
 };
 
+export const normalizePassengerCount = (value: number) => {
+  return toNonNegativeInt(value);
+};
+
 export const calculateRequestedSeats = (adults: number, children: number) => {
-  return toNonNegativeInt(adults) + toNonNegativeInt(children);
+  return normalizePassengerCount(adults) + normalizePassengerCount(children);
 };
 
 export const calculateCurrentSeats = (occupiedAdults: number, occupiedChildren: number) => {
-  return toNonNegativeInt(occupiedAdults) + toNonNegativeInt(occupiedChildren);
+  return normalizePassengerCount(occupiedAdults) + normalizePassengerCount(occupiedChildren);
 };
 
 export const hasDuplicateBooking = (existingBooking: unknown) => {
