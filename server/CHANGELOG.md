@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/KikolasDEV/yellow-airline/compare/server-1.1.4...server-1.1.5) (2026-04-02)
+
+
+### Bug Fixes
+
+* **server:** reject bookings without seat-paying passengers ([225e1f7](https://github.com/KikolasDEV/yellow-airline/commit/225e1f76378c14c5d7f5f7e4f454cf58f88022a4))
+
 ## [1.1.4](https://github.com/KikolasDEV/yellow-airline/compare/server-1.1.3...server-1.1.4) (2026-04-02)
 
 
