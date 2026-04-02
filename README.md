@@ -1,69 +1,184 @@
 # Yellow Airline
 
-Yellow Airline es una plataforma web full stack para buscar vuelos, gestionar autenticacion de usuarios y crear reservas con una experiencia de cabina mas interactiva. El proyecto esta orientado a MVP real: arquitectura separada frontend/backend, reglas de negocio explicitas, CI automatizada y versionado continuo.
+<p align="center">
+  <strong>Plataforma full stack de reservas de vuelos con experiencia premium, pagos con Stripe y arquitectura moderna separada en frontend y backend.</strong>
+</p>
 
-## Que resuelve el proyecto
+<p align="center">
+  <img alt="React" src="https://img.shields.io/badge/React-19-20232A?logo=react">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white">
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white">
+  <img alt="Express" src="https://img.shields.io/badge/Express-5-000000?logo=express">
+  <img alt="Prisma" src="https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma&logoColor=white">
+  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-Base%20de%20datos-4169E1?logo=postgresql&logoColor=white">
+  <img alt="Stripe" src="https://img.shields.io/badge/Stripe-Pagos-635BFF?logo=stripe&logoColor=white">
+  <img alt="Playwright" src="https://img.shields.io/badge/Playwright-E2E-2EAD33?logo=playwright&logoColor=white">
+</p>
 
-- Permite buscar vuelos por origen y destino.
-- Permite registrar e iniciar sesion de usuarios.
-- Permite reservar vuelos siendo usuario autenticado.
-- Evita reservas duplicadas para el mismo usuario y vuelo.
-- Controla capacidad disponible para evitar sobreventa.
-- Ofrece personalizacion de asientos con impacto en tarifa.
-- Muestra el historial de reservas del usuario (`My Bookings`).
+## ✨ Resumen
 
-## Arquitectura
+**Yellow Airline** es una aplicación web de reservas de vuelos orientada a simular un producto real: búsqueda de vuelos, autenticación, experiencia VIP, selección de asientos, pago con Stripe, panel de reservas y automatización de calidad y releases.
 
-- `client/`: SPA en React 19 + Vite + TypeScript.
-- `server/`: API REST en Express 5 + Prisma + PostgreSQL.
-- `docs/`: PRD, logica de negocio, testing y versionado.
-- `.github/workflows/`: CI y automatizaciones de release.
+No está planteado como una simple demo visual. El proyecto incluye muchas de las piezas que suelen aparecer en productos profesionales:
 
-## Stack tecnologico
+- Interfaz moderna y responsive
+- Backend con reglas de negocio reales
+- Base de datos relacional
+- Autenticación con JWT
+- Pagos con webhook
+- Tests automáticos
+- CI/CD
+- Versionado automático
 
-- Frontend: React, React Router, Tailwind, i18next, Framer Motion.
-- Backend: Express, Prisma, JWT, bcrypt.
-- Calidad: ESLint, Vitest, Playwright.
-- CI/CD: GitHub Actions.
-- Releases: Release Please.
+## 🚀 Qué permite hacer
 
-## Flujo funcional principal
+- Buscar vuelos por **origen** y **destino**.
+- Ver **precios dinámicos** según ocupación y urgencia.
+- Registrarse e iniciar sesión.
+- Acceder a una experiencia **VIP** dedicada.
+- Configurar una reserva con **pasajeros** y **asientos**.
+- Pagar mediante **Stripe Checkout**.
+- Crear la reserva real tras confirmación por **webhook**.
+- Consultar `My Bookings`.
+- Descargar un **boarding pass en PDF con QR**.
+- Usar la app en **español e inglés**.
+- Alternar entre **tema claro y oscuro**.
 
-1. Usuario entra al buscador y consulta inventario de vuelos.
-2. Si no esta autenticado, realiza login o registro.
-3. Selecciona vuelo, configura pasajeros y asientos.
-4. El backend valida reglas de duplicado/capacidad.
-5. Se crea reserva y aparece en `My Bookings`.
+## 🧱 Arquitectura
 
-## Reglas de negocio clave
+```text
+yellow-airline/
+  client/   -> SPA en React + Vite + TypeScript
+  server/   -> API REST en Express + Prisma + PostgreSQL
+  docs/     -> PRD, lógica de negocio, testing y versionado
+  .github/  -> workflows de CI, seguridad y releases
+```
+
+### Frontend
+
+- `React 19` + `Vite`
+- `TypeScript`
+- `Tailwind CSS`
+- `Framer Motion`
+- `i18next`
+- `react-hook-form` + `Zod`
+
+### Backend
+
+- `Express 5`
+- `Prisma`
+- `PostgreSQL`
+- `JWT`
+- `bcrypt`
+- `Stripe`
+
+## 🔄 Flujo principal del producto
+
+```text
+Home -> Buscar vuelos -> Elegir vuelo -> Personalizar reserva -> Stripe Checkout
+-> Webhook de Stripe -> Crear reserva pagada -> My Bookings -> Boarding pass
+```
+
+### Reglas importantes
 
 - Un usuario no puede reservar dos veces el mismo vuelo.
-- Adultos y ninos consumen asiento; infantes no.
-- Si no hay capacidad, la reserva se rechaza.
-- El total de pricing no debe ser negativo.
+- Adultos y niños consumen asiento; infantes no.
+- Solo las reservas `PAID` cuentan para ocupación real.
+- El precio final depende de precio base, ocupación y cercanía de salida.
+- La reserva definitiva se crea en backend tras el webhook, no desde el frontend.
 
-## Instalacion local
+## 🛠️ Stack técnico
 
-Instala dependencias en cada app:
+### Frontend
+
+- React 19
+- Vite
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- react-hook-form
+- Zod
+- i18next
+- Vitest
+- Playwright
+
+### Backend
+
+- Express 5
+- Prisma
+- PostgreSQL
+- bcrypt
+- JWT
+- Stripe
+- Vitest
+
+### Tooling
+
+- ESLint
+- GitHub Actions
+- Release Please
+
+## 📦 Puesta en marcha local
+
+### 1. Instalar dependencias
 
 ```bash
 cd client && npm install
 cd server && npm install
 ```
 
-Levanta backend y frontend en dos terminales:
+### 2. Variables de entorno
+
+#### Backend (`server/.env`)
+
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `CLIENT_URL`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+
+#### Frontend (`client/.env.local`)
+
+- `VITE_STRIPE_PUBLISHABLE_KEY`
+
+### 3. Poblar la base de datos
+
+```bash
+cd server && npx prisma db seed
+```
+
+### 4. Levantar el proyecto
+
+En dos terminales distintas:
 
 ```bash
 cd server && npm run dev
 cd client && npm run dev
 ```
 
+### URLs locales
+
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:5000`
 
-## Scripts utiles
+## 🧪 Testing
 
-Frontend:
+El proyecto ya cuenta con una base de testing automatizado funcional:
+
+- **Unit tests frontend** con `Vitest`
+- **Unit tests backend** con `Vitest`
+- **E2E frontend** con `Playwright`
+
+### Flujos E2E cubiertos
+
+- Render de vuelos en Home
+- Login
+- Reserva autenticada
+- Carga de `My Bookings`
+
+### Comandos útiles
+
+#### Frontend
 
 ```bash
 cd client && npm run lint
@@ -73,7 +188,7 @@ cd client && npm run test:e2e
 cd client && npm run test
 ```
 
-Backend:
+#### Backend
 
 ```bash
 cd server && npm run lint
@@ -82,52 +197,87 @@ cd server && npm run test:unit
 cd server && npm run test
 ```
 
-## Testing actual
+## ⚙️ CI/CD y releases
 
-- Unit frontend: `client/src/lib/pricing.test.ts`.
-- Unit backend: `server/src/lib/bookingRules.test.ts`.
-- E2E frontend:
-  - `client/e2e/home.spec.ts`
-  - `client/e2e/login.spec.ts`
-  - `client/e2e/booking-authenticated.spec.ts`
-  - `client/e2e/my-bookings.spec.ts`
+### CI
 
-## CI/CD
+Workflow: `.github/workflows/ci.yml`
 
-En cada `push` y `pull_request`, `ci.yml` valida:
+Valida en PRs a `main`:
 
-- `client`: install, lint, build, unit y E2E.
-- `server`: install, lint, build y unit.
+- lint
+- build
+- unit tests
+- E2E frontend
 
-Archivo: `.github/workflows/ci.yml`.
+### Seguridad
 
-## Versionado automatico (Release Please)
+Workflow: `.github/workflows/security.yml`
 
-Release Please revisa commits en `main`, abre/actualiza PR de release y propone:
+Lanza una revisión automatizada de seguridad sobre PRs.
 
-- bump de version (`client/package.json` y `server/package.json`)
-- changelog automatico
+### Versionado automático
 
-Cuando mergeas esa PR de release, la version queda aplicada.
+Workflow: `.github/workflows/release-please.yml`
 
-Archivos:
+El proyecto usa **Release Please** con separación por componente:
 
-- `.github/workflows/release-please.yml`
-- `release-please-config.json`
-- `.release-please-manifest.json`
+- `client`
+- `server`
 
-## Convencion de commits recomendada
+Archivos clave:
 
-Usa Conventional Commits para semver correcto:
+- `release-please-client-config.json`
+- `release-please-server-config.json`
+- `.release-please-manifest-client.json`
+- `.release-please-manifest-server.json`
 
-- `feat:` nueva funcionalidad (minor)
-- `fix:` correccion de bug (patch)
-- `feat!:` o `BREAKING CHANGE:` cambio mayor (major)
-- `docs:`, `test:`, `chore:`, `ci:` para mantenimiento
+## 📝 Convención de commits
 
-## Documentacion
+Se recomienda usar **Conventional Commits**:
+
+- `feat:` nueva funcionalidad
+- `fix:` corrección de bug
+- `docs:` documentación
+- `test:` tests
+- `refactor:` refactor interno
+- `ci:` cambios en pipelines
+- `chore:` mantenimiento
+
+Ejemplos:
+
+```text
+feat: add multilingual booking flow
+fix: restore e2e compatibility
+docs: update project documentation
+ci: split release-please by component
+```
+
+## 📚 Documentación adicional
+
+En `docs/` encontrarás documentación más detallada sobre:
 
 - `docs/PRD.md`
 - `docs/logica-negocio.md`
 - `docs/testing.md`
 - `docs/versionado.md`
+
+## ✅ Puntos fuertes del proyecto
+
+- Arquitectura clara de frontend y backend.
+- Flujo de pago correctamente modelado con webhook.
+- UI responsive, multidioma y con identidad visual fuerte.
+- Reglas de negocio explícitas y testeables.
+- Base técnica suficientemente seria para seguir creciendo.
+
+## 🔭 Siguientes mejoras lógicas
+
+- Endurecer aún más la seguridad del backend
+- Ampliar cobertura de tests backend
+- Centralizar mejor el acceso API en frontend
+- Evolucionar la propuesta VIP hacia beneficios funcionales más claros
+- Añadir herramientas administrativas si el producto crece
+
+## 👀 Estado del repositorio
+
+Yellow Airline ya está por encima de un MVP básico. Tiene una base sólida de producto, arquitectura y automatización, pensada para seguir evolucionando sin necesidad de rehacerlo desde cero.
