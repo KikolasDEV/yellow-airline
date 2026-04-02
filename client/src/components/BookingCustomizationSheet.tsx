@@ -67,6 +67,14 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
   }, [isOpen]);
 
   useEffect(() => {
+    document.body.classList.toggle('sheet-open', isOpen);
+
+    return () => {
+      document.body.classList.remove('sheet-open');
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
     setSelectedSeatIds((currentSeats) => currentSeats.slice(0, payablePassengers));
   }, [payablePassengers]);
 

@@ -497,7 +497,7 @@ textarea {
 .sheet-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: 90;
   background: rgba(2, 6, 23, 0.58);
   backdrop-filter: blur(8px);
 }
@@ -507,7 +507,7 @@ textarea {
   right: 1rem;
   bottom: 1rem;
   left: 1rem;
-  z-index: 50;
+  z-index: 100;
   max-height: calc(100vh - 2rem);
   overflow: auto;
   border: 1px solid var(--border-soft);
@@ -516,6 +516,7 @@ textarea {
   padding: 1.25rem;
   padding-bottom: 1.75rem;
   box-shadow: var(--shadow-strong);
+  isolation: isolate;
 }
 
 .sheet-header-band {
@@ -676,12 +677,17 @@ textarea {
 .summary-actions {
   position: sticky;
   bottom: 0;
+  z-index: 2;
   display: grid;
   gap: 0.85rem;
   margin-top: 1rem;
   padding-top: 1rem;
   padding-bottom: 0.25rem;
   background: linear-gradient(180deg, color-mix(in srgb, var(--surface-elevated) 10%, transparent 90%) 0%, var(--surface-elevated) 24%, var(--surface-elevated) 100%);
+}
+
+body.sheet-open footer {
+  pointer-events: none;
 }
 
 .booking-chip {
