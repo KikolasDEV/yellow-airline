@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.0](https://github.com/KikolasDEV/yellow-airline/compare/client-1.2.0...client-1.3.0) (2026-04-02)
+
+
+### Features
+
+* overhaul responsive UI and localization ([82918d3](https://github.com/KikolasDEV/yellow-airline/commit/82918d341138228a5ba6749d64c5ebaf10da8cd5))
+* overhaul responsive UI and localization ([f6f499d](https://github.com/KikolasDEV/yellow-airline/commit/f6f499d1d00c5ad27c4bdf208948bc5b7e2e4b39))
+
+
+### Bug Fixes
+
+* keep booking sheet actions clickable ([00b3a4c](https://github.com/KikolasDEV/yellow-airline/commit/00b3a4cfc4d4ebc5e4c39da9bb3b806f01556e5f))
+* restore e2e compatibility ([c9406db](https://github.com/KikolasDEV/yellow-airline/commit/c9406db1f0b765b3e8090c6c7b73e91fa408de6c))
+
 ## [1.2.0](https://github.com/KikolasDEV/yellow-airline/compare/client-1.1.0...client-1.2.0) (2026-04-02)
 
 
