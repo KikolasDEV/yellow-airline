@@ -62,7 +62,7 @@ jobs:
               ]
             }')")
 
-          NOTES=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts | map(.text) | join("\n") // empty')
+          NOTES=$(echo "$RESPONSE" | jq -r 'if (.candidates // empty) and ((.candidates | length) > 0) then (.candidates[0].content.parts // [] | map(.text // "") | join("\n")) else empty end')
 
           if [ -z "$NOTES" ]; then
             echo "No se pudieron generar notas para $TAG con Gemini. Se mantienen notas por defecto."
@@ -107,7 +107,7 @@ jobs:
               ]
             }')")
 
-          NOTES=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts | map(.text) | join("\n") // empty')
+          NOTES=$(echo "$RESPONSE" | jq -r 'if (.candidates // empty) and ((.candidates | length) > 0) then (.candidates[0].content.parts // [] | map(.text // "") | join("\n")) else empty end')
 
           if [ -z "$NOTES" ]; then
             echo "No se pudieron generar notas para $TAG con Gemini. Se mantienen notas por defecto."
