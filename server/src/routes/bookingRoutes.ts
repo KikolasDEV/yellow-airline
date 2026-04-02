@@ -65,6 +65,10 @@ router.post('/', authenticateToken, async (req: any, res) => {
     const normalizedChildren = normalizePassengerCount(Number(children));
     const normalizedInfants = normalizePassengerCount(Number(infants));
 
+    if (requestedSeats < 1) {
+      return res.status(400).json({ error: "Debes reservar al menos un asiento (adulto o nino)." });
+    }
+
     if (!hasEnoughCapacity({
       currentSeats,
       requestedSeats,
