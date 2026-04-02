@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/KikolasDEV/yellow-airline/compare/server-1.1.3...server-1.1.4) (2026-04-02)
+
+
+### Bug Fixes
+
+* **server:** return 404 when booking flight does not exist ([6153156](https://github.com/KikolasDEV/yellow-airline/commit/6153156b64ea437d126cf4a9e6fb22f44a04a5a2))
+
 ## [1.1.3](https://github.com/KikolasDEV/yellow-airline/compare/server-1.1.2...server-1.1.3) (2026-04-02)
 
 
