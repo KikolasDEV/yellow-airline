@@ -12,6 +12,8 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,9 +28,8 @@ jobs:
           manifest-file: .release-please-manifest.json
 
       - name: Generate AI release notes for client
-        if: ${{ steps.release.outputs['client--release_created'] == 'true' && secrets.OPENAI_API_KEY != '' }}
+        if: ${{ steps.release.outputs['client--release_created'] == 'true' && env.OPENAI_API_KEY != '' }}
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.release.outputs['client--tag_name'] }}
         run: |
@@ -70,9 +71,8 @@ jobs:
           gh release edit "$TAG" --notes "$NOTES"
 
       - name: Generate AI release notes for server
-        if: ${{ steps.release.outputs['server--release_created'] == 'true' && secrets.OPENAI_API_KEY != '' }}
+        if: ${{ steps.release.outputs['server--release_created'] == 'true' && env.OPENAI_API_KEY != '' }}
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.release.outputs['server--tag_name'] }}
         run: |
