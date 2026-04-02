@@ -30,6 +30,10 @@ router.post('/', authenticateToken, async (req: any, res) => {
   const normalizedFlightId = normalizeFlightId(Number(flightId));
   const userId = req.user.userId;
 
+  if (normalizedFlightId < 1) {
+    return res.status(400).json({ error: "Identificador de vuelo no valido." });
+  }
+
   try {
     // 1. Verificar si ya tiene ESTE vuelo (Evitar duplicados)
     const existingBooking = await prisma.booking.findUnique({
