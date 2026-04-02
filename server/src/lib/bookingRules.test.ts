@@ -4,6 +4,7 @@ import {
   calculateRequestedSeats,
   hasDuplicateBooking,
   hasEnoughCapacity,
+  normalizePassengerCount,
 } from './bookingRules.js';
 
 describe('bookingRules', () => {
@@ -38,5 +39,11 @@ describe('bookingRules', () => {
 
   it('calculates current occupied seats from adults and children sums', () => {
     expect(calculateCurrentSeats(30, 8)).toBe(38);
+  });
+
+  it('normalizes invalid or negative passenger counts to non-negative integers', () => {
+    expect(normalizePassengerCount(-2)).toBe(0);
+    expect(normalizePassengerCount(3.9)).toBe(3);
+    expect(normalizePassengerCount(Number.NaN)).toBe(0);
   });
 });

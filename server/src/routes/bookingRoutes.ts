@@ -6,6 +6,7 @@ import {
   calculateRequestedSeats,
   hasDuplicateBooking,
   hasEnoughCapacity,
+  normalizePassengerCount,
 } from '../lib/bookingRules.js';
 
 const router = Router();
@@ -50,6 +51,9 @@ router.post('/', authenticateToken, async (req: any, res) => {
 
     const currentSeats = calculateCurrentSeats(totalOccupied._sum.adults || 0, totalOccupied._sum.children || 0);
     const requestedSeats = calculateRequestedSeats(Number(adults), Number(children));
+    const normalizedAdults = normalizePassengerCount(Number(adults));
+    const normalizedChildren = normalizePassengerCount(Number(children));
+    const normalizedInfants = normalizePassengerCount(Number(infants));
 
     if (!hasEnoughCapacity({
       currentSeats,
@@ -64,9 +68,9 @@ router.post('/', authenticateToken, async (req: any, res) => {
       data: {
         userId,
         flightId,
-        adults: Number(adults),
-        children: Number(children),
-        infants: Number(infants)
+        adults: normalizedAdults,
+        children: normalizedChildren,
+        infants: normalizedInfants,
       }
     });
 
