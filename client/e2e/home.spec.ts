@@ -11,6 +11,12 @@ test('shows available flights from the mocked API', async ({ page }) => {
           destination: 'Paris',
           departureTime: '2026-06-01T10:00:00.000Z',
           price: 99.99,
+          basePrice: 99.99,
+          finalPrice: 99.99,
+          availableSeats: 42,
+          occupancyRate: 0.3,
+          urgencyFactor: 1,
+          capacity: 180,
         },
       ]),
     });

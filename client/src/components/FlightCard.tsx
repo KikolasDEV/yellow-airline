@@ -15,6 +15,7 @@ export const FlightCard = ({ flight }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const isSpanish = i18n.resolvedLanguage?.startsWith('es') ?? i18n.language.startsWith('es');
+  const availabilityLabel = `${flight.availableSeats} seats left`;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', {
@@ -27,20 +28,21 @@ export const FlightCard = ({ flight }: Props) => {
 
   const quickFacts = [
     `${formatDate(flight.departureTime)}`,
-    `${flight.price.toFixed(2)}€ base`,
-    'Exit row +18€',
+    `${flight.basePrice.toFixed(2)}€ base`,
+    `${flight.finalPrice.toFixed(2)}€ now`,
+    availabilityLabel,
   ];
 
-  const handleConfirmBooking = async ({ passengers, selectedSeats, extraTotal }: { passengers: PassengerCount; selectedSeats: string[]; extraTotal: number }) => {
+  const handleConfirmBooking = async ({ passengers }: { passengers: PassengerCount; selectedSeats: string[]; extraTotal: number }) => {
     const token = localStorage.getItem('token');
 
     if (!token) {
       toast.error(t('members_only_booking'));
-      return;
+      return false;
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/bookings', {
+      const response = await fetch('http://localhost:5000/api/bookings/checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,15 +57,20 @@ export const FlightCard = ({ flight }: Props) => {
       const data = await response.json();
 
       if (response.ok) {
-        const seatsLabel = selectedSeats.length > 0 ? ` · Seats ${selectedSeats.join(', ')}` : '';
-        const upgradeLabel = extraTotal > 0 ? ` · +${extraTotal.toFixed(2)}€` : '';
-        toast.success(`${t('flight_booked_prefix')} ${flight.destination}${t('flight_booked_suffix')}${seatsLabel}${upgradeLabel}`);
-        return;
+        if (data.checkoutUrl) {
+          window.location.assign(data.checkoutUrl);
+          return true;
+        }
+
+        toast.error('No se pudo abrir Stripe Checkout.');
+        return false;
       }
 
       toast.error(data.error || t('booking_failed'));
+      return false;
     } catch {
       toast.error(t('booking_connection_error'));
+      return false;
     }
   };
 
@@ -80,7 +87,7 @@ export const FlightCard = ({ flight }: Props) => {
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="promo-badge promo-badge-contrast">{flight.price.toFixed(2)}€</span>
+                <span className="promo-badge promo-badge-contrast">{flight.finalPrice.toFixed(2)}€</span>
                 <span className="booking-chip">Premium seat map inside</span>
               </div>
               <div>
@@ -120,8 +127,8 @@ export const FlightCard = ({ flight }: Props) => {
                     <p className="mt-2 text-sm text-[var(--text-secondary)]">Window, aisle or exit row with live total before checkout.</p>
                   </div>
                   <div>
-                    <p className="eyebrow">Motion Layer</p>
-                    <p className="mt-2 text-sm text-[var(--text-secondary)]">Cards expand softly and the route rail keeps the inventory board alive.</p>
+                    <p className="eyebrow">Availability</p>
+                    <p className="mt-2 text-sm text-[var(--text-secondary)]">{availabilityLabel}. Dynamic fare updates before payment.</p>
                   </div>
                 </div>
               </motion.div>

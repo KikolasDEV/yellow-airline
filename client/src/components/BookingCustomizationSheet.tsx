@@ -10,7 +10,7 @@ interface BookingCustomizationSheetProps {
   flight: Flight;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (payload: { passengers: PassengerCount; selectedSeats: string[]; extraTotal: number }) => Promise<void> | void;
+  onConfirm: (payload: { passengers: PassengerCount; selectedSeats: string[]; extraTotal: number }) => Promise<boolean> | boolean;
 }
 
 const createSeatLayout = () => {
@@ -80,7 +80,7 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
   };
 
   const totalPrice = calculateBookingTotal({
-    basePrice: flight.price,
+    basePrice: flight.finalPrice,
     adults: passengers.adults,
     children: passengers.children,
     extraTotal,
@@ -95,12 +95,15 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
     setIsSubmitting(true);
 
     try {
-      await onConfirm({
+      const canCloseSheet = await onConfirm({
         passengers,
         selectedSeats: selectedSeatIds,
         extraTotal,
       });
-      onClose();
+
+      if (canCloseSheet) {
+        onClose();
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -168,7 +171,11 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
 
                   <div className="summary-line">
                     <span>Base fare</span>
-                    <strong>{flight.price.toFixed(2)}€</strong>
+                    <strong>{flight.basePrice.toFixed(2)}€</strong>
+                  </div>
+                  <div className="summary-line">
+                    <span>Dynamic fare</span>
+                    <strong>{flight.finalPrice.toFixed(2)}€</strong>
                   </div>
                   <div className="summary-line">
                     <span>Passengers with seats</span>

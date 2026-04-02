@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma.js';
+import { calculateOccupiedSeats, calculatePricingSnapshot } from '../lib/pricing.js';
 
 const router = Router();
 
@@ -16,7 +17,43 @@ router.get('/', async (req, res) => {
       },
       orderBy: { departureTime: 'asc' }
     });
-    res.json(flights);
+
+    const occupiedSeatsByFlight = await prisma.booking.groupBy({
+      by: ['flightId'],
+      where: { status: 'PAID' },
+      _sum: {
+        adults: true,
+        children: true,
+      },
+    });
+
+    const occupancyMap = new Map(
+      occupiedSeatsByFlight.map((entry) => {
+        const occupiedSeats = calculateOccupiedSeats({
+          adults: entry._sum.adults || 0,
+          children: entry._sum.children || 0,
+        });
+
+        return [entry.flightId, occupiedSeats] as const;
+      })
+    );
+
+    const flightsWithDynamicPricing = flights.map((flight) => {
+      const occupiedSeats = occupancyMap.get(flight.id) || 0;
+      const pricingSnapshot = calculatePricingSnapshot({
+        basePrice: flight.price,
+        occupiedSeats,
+        capacity: flight.capacity,
+        departureTime: flight.departureTime,
+      });
+
+      return {
+        ...flight,
+        ...pricingSnapshot,
+      };
+    });
+
+    res.json(flightsWithDynamicPricing);
   } catch (error) {
     res.status(500).json({ error: "Error al buscar vuelos" });
   }
@@ -24,16 +61,16 @@ router.get('/', async (req, res) => {
 
 // POST: Crear un nuevo vuelo
 router.post('/', async (req, res) => {
-  const { number, origin, destination, departureTime, price } = req.body;
+  const { origin, destination, departureTime, price, capacity } = req.body;
   
   try {
     const newFlight = await prisma.flight.create({
       data: {
-        number,
         origin,
         destination,
         departureTime: new Date(departureTime),
-        price: parseFloat(price)
+        price: parseFloat(price),
+        capacity: capacity ? Number(capacity) : 180,
       }
     });
     res.status(201).json(newFlight);
@@ -45,17 +82,17 @@ router.post('/', async (req, res) => {
 // UPDATE: Editar un vuelo existente
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { number, origin, destination, departureTime, price } = req.body;
+  const { origin, destination, departureTime, price, capacity } = req.body;
 
   try {
     const updatedFlight = await prisma.flight.update({
       where: { id: Number(id) },
       data: {
-        number,
         origin,
         destination,
         departureTime: departureTime ? new Date(departureTime) : undefined,
-        price: price ? parseFloat(price) : undefined
+        price: price ? parseFloat(price) : undefined,
+        capacity: capacity ? Number(capacity) : undefined,
       }
     });
     res.json(updatedFlight);
