@@ -120,7 +120,7 @@ Como usuario interesado en beneficios premium, quiero acceder a la zona VIP para
 - Persistencia: base de datos relacional con modelos de User, Flight y Booking.
 
 ## Riesgos Actuales
-- No existe una suite real de tests automatizados.
+- La suite automatizada actual cubre pricing y un smoke flow de la home, pero aun no cubre login, reserva autenticada ni consultas de reservas end to end.
 - La propuesta VIP aun no expresa beneficios funcionales claros dentro del producto.
 - Hay mezcla de copy en espanol e ingles, lo que afecta consistencia de marca.
 - El secreto JWT tiene un fallback en codigo y debe depender solo del entorno en una version mas madura.

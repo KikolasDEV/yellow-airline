@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { PassengerSelector } from './PassengerSelector';
 import { SeatMap } from './SeatMap';
 import { AnimatedRoute } from './AnimatedRoute';
+import { calculateBookingTotal, calculateSeatUpgradeTotal } from '../lib/pricing';
 import type { Flight, PassengerCount, SeatOption } from '../types';
 
 interface BookingCustomizationSheetProps {
@@ -50,10 +51,7 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
 
   const seats = useMemo(() => createSeatLayout(), []);
   const payablePassengers = passengers.adults + passengers.children;
-  const extraTotal = selectedSeatIds.reduce((total, seatId) => {
-    const seat = seats.find((entry) => entry.id === seatId);
-    return total + (seat?.priceModifier ?? 0);
-  }, 0);
+  const extraTotal = calculateSeatUpgradeTotal(selectedSeatIds, seats);
 
   useEffect(() => {
     if (!isOpen) {
@@ -81,7 +79,12 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
     });
   };
 
-  const totalPrice = flight.price * Math.max(1, payablePassengers) + extraTotal;
+  const totalPrice = calculateBookingTotal({
+    basePrice: flight.price,
+    adults: passengers.adults,
+    children: passengers.children,
+    extraTotal,
+  });
   const canConfirm = payablePassengers === 0 || selectedSeatIds.length === payablePassengers;
 
   const handleConfirm = async () => {

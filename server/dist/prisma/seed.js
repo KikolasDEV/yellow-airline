@@ -24,7 +24,7 @@ async function main() {
         createdFlights.push(createdFlight);
     }
     const hashedPassword = await bcrypt.hash('testing123', 10);
-    const seededUser = await prisma.user.create({
+    await prisma.user.create({
         data: {
             name: 'Kiko Tester',
             email: 'kiko@gmail.com',
