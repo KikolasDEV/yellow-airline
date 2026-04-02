@@ -7,6 +7,13 @@ const toNonNegativeInt = (value) => {
 export const normalizePassengerCount = (value) => {
     return toNonNegativeInt(value);
 };
+export const normalizeFlightId = (value) => {
+    const normalizedValue = Number(value);
+    if (!Number.isFinite(normalizedValue)) {
+        return 0;
+    }
+    return Math.max(0, Math.floor(normalizedValue));
+};
 export const calculateRequestedSeats = (adults, children) => {
     return normalizePassengerCount(adults) + normalizePassengerCount(children);
 };
