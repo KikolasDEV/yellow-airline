@@ -50,6 +50,10 @@ router.post('/', authenticateToken, async (req: any, res) => {
       include: { _count: { select: { bookings: true } } } // Esto es ultra eficiente
     });
 
+    if (!flight) {
+      return res.status(404).json({ error: "Vuelo no encontrado." });
+    }
+
     const totalOccupied = await prisma.booking.aggregate({
       where: { flightId: normalizedFlightId },
       _sum: { adults: true, children: true }
@@ -64,7 +68,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
     if (!hasEnoughCapacity({
       currentSeats,
       requestedSeats,
-      capacity: flight?.capacity || 0,
+      capacity: flight.capacity,
     })) {
       return res.status(400).json({ error: "Vuelo completo. No hay suficientes asientos." });
     }
