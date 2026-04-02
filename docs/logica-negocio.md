@@ -1,321 +1,309 @@
-# Lógica de negocio avanzada
+# Logica de Negocio de Yellow Airline
 
 ## Objetivo
-Implementar tres capacidades clave en Yellow Airline:
 
-1. Precios dinámicos según ocupación y urgencia
-2. Pago real en modo test con Stripe Checkout
-3. Generación de boarding pass en PDF con código QR
+Explicar las reglas funcionales reales del proyecto en su estado actual.
 
-## Estado actual del proyecto
+Este documento no describe solo ideas. Describe lo que el sistema ya hace hoy y qué reglas importantes gobiernan su comportamiento.
 
-### Frontend
-- `client/src/pages/Home.tsx`
-  - Busca vuelos con `GET /api/flights`
-- `client/src/components/FlightCard.tsx`
-  - Reserva directamente con `POST /api/bookings`
-- `client/src/pages/MyBookings.tsx`
-  - Lista reservas del usuario autenticado
-- `client/src/types/index.ts`
-  - Tiene tipos desalineados con el backend actual
+## 1. Qué resuelve el producto hoy
 
-### Backend
-- `server/src/routes/flightRoutes.ts`
-  - Devuelve vuelos desde Prisma con el precio base
-- `server/src/routes/bookingRoutes.ts`
-  - Valida duplicados y capacidad
-  - Crea la reserva sin flujo de pago
-- `server/prisma/schema.prisma`
-  - `Flight` tiene `price` base y `capacity`
-  - `Booking` no guarda snapshot de precio ni estado de pago
-- `server/src/index.ts`
-  - Usa `express.json()` global, lo que requiere ajuste para webhooks de Stripe
+El producto permite:
 
-## Requerimiento 1: Precios dinámicos
+- buscar vuelos
+- aplicar filtros por origen y destino
+- registrarse e iniciar sesión
+- mantener usuarios VIP
+- reservar vuelos con autenticación
+- configurar pasajeros y asientos antes del pago
+- pagar mediante Stripe Checkout
+- crear la reserva tras confirmación de pago
+- consultar reservas propias
+- generar boarding pass PDF con QR
 
-### Regla
-Precio final:
+## 2. Entidades principales del dominio
 
-`PrecioFinal = PrecioBase * (1 + CapacidadOcupacion) * FactorUrgencia`
+## Usuario
 
-### Definiciones
-- `PrecioBase`: `flight.price`
-- `CapacidadOcupacion`: `occupiedSeats / capacity`
-- `FactorUrgencia`: multiplicador según cercanía de la salida
+Representa a una persona que puede:
 
-### Propuesta de factores de urgencia
-- Más de 14 días: `1.0`
-- Entre 7 y 14 días: `1.08`
-- Entre 3 y 7 días: `1.15`
-- Entre 24 y 72 horas: `1.25`
-- Menos de 24 horas: `1.4`
+- registrarse
+- iniciar sesión
+- reservar vuelos
+- consultar sus reservas
 
-### Fuente de verdad
-El cálculo debe vivir en el backend.
+Campos importantes:
 
-### Implementación propuesta
-Crear una utilidad reutilizable en backend, por ejemplo:
+- nombre
+- email
+- pasaporte
+- password hash
+- `isVip`
 
-- `server/src/lib/pricing.ts`
+## Vuelo
 
-Responsabilidades:
-- calcular asientos ocupados
-- calcular tasa de ocupación
-- calcular factor de urgencia
-- devolver snapshot de pricing:
-  - `basePrice`
-  - `occupancyRate`
-  - `urgencyFactor`
-  - `finalPrice`
-  - `availableSeats`
+Representa un trayecto reservable.
 
-### Uso de esa lógica
-- `GET /api/flights`
-  - mostrar precio dinámico en búsqueda
-- `POST /api/bookings/checkout-session`
-  - recalcular el precio real antes de cobrar
-- webhook de Stripe
-  - usar los datos persistidos o recalcular solo para validación defensiva
+Campos importantes:
 
-## Requerimiento 2: Stripe Checkout en modo test
+- origen
+- destino
+- hora de salida
+- precio base
+- capacidad
 
-### Enfoque elegido
-Usar `Stripe Checkout`.
+## Reserva
 
-### Motivo
-- valida tarjetas reales de prueba
-- reduce complejidad del formulario
-- acelera la implementación
-- es más robusto que embebido manual
+Representa una compra real asociada a un usuario y a un vuelo.
 
-### Flujo propuesto
-1. Usuario elige vuelo y pasajeros
-2. Frontend solicita sesión de checkout al backend
-3. Backend valida:
-   - token
-   - duplicado
-   - capacidad disponible
-   - precio dinámico
-4. Backend crea `Stripe Checkout Session`
-5. Frontend redirige a Stripe
-6. Stripe notifica por webhook
-7. Backend crea la reserva confirmada
-8. Usuario vuelve a la app
-9. Puede ver la reserva en `My Bookings`
-10. Puede descargar su boarding pass
+Campos importantes:
 
-### Endpoints nuevos
-- `POST /api/bookings/checkout-session`
-- `POST /api/payments/webhook`
+- usuario
+- vuelo
+- adultos
+- niños
+- infantes
+- precio base y final
+- moneda
+- estado
+- referencia de reserva
+- stripe session id
 
-### Datos a enviar en checkout
-- `flightId`
-- `adults`
-- `children`
-- `infants`
+## 3. Reglas principales de negocio
 
-### Datos a persistir en la reserva
+## 3.1 Búsqueda de vuelos
+
+El sistema permite buscar por:
+
+- origen
+- destino
+
+Los resultados se devuelven ordenados por fecha de salida ascendente.
+
+Además, el backend devuelve información enriquecida para cada vuelo:
+
 - `basePrice`
 - `finalPrice`
-- `currency`
-- `status`
-- `bookingReference`
-- `stripeSessionId`
+- `availableSeats`
+- `occupancyRate`
+- `urgencyFactor`
 
-### Estados recomendados
+## 3.2 Pricing dinámico
+
+El precio final no es simplemente el precio base.
+
+Se calcula según:
+
+- precio base del vuelo
+- ocupación del vuelo
+- cercanía temporal de la salida
+
+### Fórmula conceptual
+
+```text
+PrecioFinal = PrecioBase * (1 + Ocupacion) * FactorUrgencia
+```
+
+### Cómo se interpreta
+
+- un vuelo más lleno puede costar más
+- un vuelo más cercano a la salida puede costar más
+
+### Regla importante
+
+La fuente de verdad del pricing es el backend, no el frontend.
+
+## 3.3 Ocupación y capacidad
+
+No todos los pasajeros cuentan igual para capacidad.
+
+### Regla actual
+
+- adultos ocupan asiento
+- niños ocupan asiento
+- infantes no ocupan asiento
+
+### Otra regla importante
+
+Solo las reservas con estado `PAID` cuentan para ocupación real.
+
+Eso evita bloquear plazas por intentos de compra no completados.
+
+## 3.4 Duplicidad de reservas
+
+Un usuario no puede reservar el mismo vuelo dos veces.
+
+Esta regla se aplica en backend y además existe soporte a nivel de datos con constraint único.
+
+## 3.5 Registro y autenticación
+
+### Registro
+
+El usuario puede registrarse con:
+
+- nombre
+- email
+- pasaporte
+- contraseña
+
+Reglas:
+
+- el email debe ser único
+- la contraseña se almacena con hash
+
+### Login
+
+El backend devuelve un JWT válido al autenticarse correctamente.
+
+El frontend usa ese token para acceder a las rutas privadas.
+
+## 3.6 Segmentación VIP
+
+El proyecto ya incluye experiencia VIP en frontend y soporte de `isVip` en backend.
+
+Hoy el producto usa la propuesta VIP como elemento de marca y de experiencia, pero aún no explota al máximo beneficios exclusivos avanzados a nivel funcional.
+
+## 3.7 Flujo de reserva actual
+
+El flujo correcto actual es:
+
+1. usuario autenticado elige un vuelo
+2. frontend abre panel de personalización
+3. usuario selecciona pasajeros
+4. usuario selecciona asientos
+5. frontend pide `checkout-session`
+6. backend valida duplicados, capacidad y pricing
+7. backend crea Stripe Checkout Session
+8. usuario paga en Stripe
+9. Stripe notifica al webhook
+10. backend crea la reserva `PAID`
+
+## 3.8 Creación real de la reserva
+
+La reserva real no la crea directamente el frontend.
+
+La crea el backend tras recibir `checkout.session.completed` desde Stripe.
+
+Esta es una regla de negocio y de arquitectura crítica porque evita inconsistencias entre “intento de pago” y “reserva confirmada”.
+
+## 3.9 Estados de reserva
+
+El modelo contempla estados como:
+
 - `PENDING`
 - `PAID`
 - `FAILED`
 - `CANCELLED`
 
-### Consideraciones del webhook
-Stripe necesita acceso al body crudo en la ruta del webhook, por lo que `server/src/index.ts` debe ajustarse para esa ruta antes del `express.json()` global o manejarla de forma específica.
+Hoy el caso principal operativo del proyecto es `PAID` tras el webhook completado correctamente.
 
-## Requerimiento 3: Boarding pass en PDF con QR
+## 3.10 Boarding pass en PDF
 
-### Objetivo
-Una vez confirmada la reserva, el usuario puede descargar una tarjeta de embarque en PDF.
+Una vez la reserva está pagada, el usuario puede descargar un boarding pass.
 
-### Ubicación ideal en UI
-- `client/src/pages/MyBookings.tsx`
+El PDF incluye información como:
 
-### Librerías propuestas
-Frontend:
-- `jspdf`
-- `qrcode`
-
-### Contenido del PDF
-- nombre del pasajero o titular
-- origen
-- destino
-- fecha y hora de salida
-- localizador (`bookingReference`)
-- identificador de reserva
+- referencia de reserva
+- ruta
+- fecha de salida
 - pasajeros
 - precio pagado
-- estado de confirmación
-- QR generado dinámicamente
+- estado
+- QR
 
-### Contenido del QR
-Recomendación:
-- usar solo `bookingReference`
-- no incluir datos personales
+### Regla importante
 
-### Condición de descarga
-Mostrar botón solo si la reserva está `PAID` o confirmada.
+El QR no debe incluir datos personales sensibles. La recomendación actual es usar la referencia de reserva.
 
-## Cambios de modelo de datos
+## 4. Qué hace cada capa del sistema en estas reglas
 
-### Prisma: `Booking`
-Agregar campos:
-- `basePrice Float`
-- `finalPrice Float`
-- `currency String @default("eur")`
-- `status String @default("PENDING")`
-- `bookingReference String @unique`
-- `stripeSessionId String?`
+## Frontend
 
-Opcionales si se quiere enriquecer el boarding pass:
-- `seatNumber String?`
-- `gate String?`
-- `boardingGroup String?`
+Se encarga de:
 
-### Prisma: `Flight`
-Mantener:
-- `price` como precio base
-- `capacity` como capacidad máxima
+- mostrar datos
+- recoger entradas del usuario
+- aplicar validaciones de UX
+- redirigir al flujo de pago
 
-No es necesario guardar el precio dinámico en `Flight`.
+## Backend
 
-## Cambios por archivo
+Se encarga de:
 
-### Backend
+- validar reglas reales
+- calcular pricing
+- validar capacidad
+- validar duplicados
+- crear sesiones de pago
+- crear reservas tras confirmación de Stripe
 
-#### `server/prisma/schema.prisma`
-- extender `Booking` con precio, estado y Stripe
+## Base de datos
 
-#### `server/src/lib/pricing.ts`
-- nueva utilidad para cálculo de pricing
+Se encarga de:
 
-#### `server/src/routes/flightRoutes.ts`
-- devolver:
-  - `basePrice`
-  - `finalPrice`
-  - `availableSeats`
-  - `occupancyRate`
+- persistir usuarios, vuelos y reservas
+- garantizar integridad mediante constraints
 
-#### `server/src/routes/bookingRoutes.ts`
-- añadir endpoint:
-  - `POST /checkout-session`
-- validar capacidad y duplicados antes de generar el checkout
+## 5. Estado actual frente a versiones anteriores
 
-#### `server/src/routes/paymentRoutes.ts` o equivalente
-- nuevo webhook Stripe
+Este proyecto ya no está en la fase descrita por documentos antiguos donde:
 
-#### `server/src/index.ts`
-- registrar la ruta webhook con manejo correcto del body
+- no había pagos online
+- no había selección de asientos
+- no existía boarding pass
+- la reserva se creaba directamente sin Stripe
 
-### Frontend
+Todo eso ya quedó superado.
 
-#### `client/src/types/index.ts`
-Corregir tipos:
-- `id` debe ser `number`
-- añadir:
-  - `basePrice`
-  - `finalPrice`
-  - `availableSeats`
-  - `occupancyRate`
-- eliminar campos inexistentes como `number` si no se exponen realmente
+Hoy el producto ya tiene implementado:
 
-#### `client/src/components/FlightCard.tsx`
-- reemplazar reserva directa por inicio de checkout
-- mostrar precio base y final
-- mostrar disponibilidad real
+- pricing dinámico
+- Stripe Checkout
+- webhook
+- selección de asientos
+- boarding pass PDF con QR
+- reservas persistidas tras pago real en modo test
 
-#### `client/src/pages/MyBookings.tsx`
-- mostrar estado de pago
-- mostrar precio pagado
-- añadir botón de descarga de boarding pass
+## 6. Riesgos y limitaciones actuales
 
-#### Rutas frontend nuevas
-- `success`
-- `cancel`
+Aunque la base funcional es buena, todavía hay áreas mejorables:
 
-## Variables de entorno necesarias
+- el secreto JWT aún tiene fallback por defecto en código
+- no hay panel administrativo completo de vuelos
+- la propuesta VIP puede reforzarse con beneficios funcionales más claros
+- la cobertura de tests puede ampliarse aún más
+- el cliente API frontend todavía no está totalmente centralizado
 
-### Backend
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-- `CLIENT_URL`
-- `JWT_SECRET`
-- `DATABASE_URL`
+## 7. Roadmap lógico recomendado
 
-### Frontend
-- `VITE_STRIPE_PUBLISHABLE_KEY`
+### Fase siguiente razonable
 
-## Dependencias nuevas
+- reforzar seguridad y configuración de entorno
+- ampliar cobertura de tests backend y frontend
+- hacer más explícitos beneficios VIP reales
+- añadir herramientas administrativas si el producto evoluciona
 
-### Backend
-- `stripe`
+### Fase futura
 
-### Frontend
-- `@stripe/stripe-js`
-- `jspdf`
-- `qrcode`
+- analítica
+- operaciones internas
+- comunicaciones transaccionales
+- monitorización
+- escalado de flujos de producto
 
-## Reglas de negocio clave
+## 8. Resumen
 
-1. El precio dinámico solo se calcula en backend.
-2. El precio mostrado en frontend es informativo, pero el precio cobrado se recalcula antes de crear la sesión.
-3. La reserva definitiva no se confirma antes del pago exitoso.
-4. Debe guardarse snapshot del precio pagado en la reserva.
-5. No se debe generar boarding pass para reservas no pagadas.
-6. El QR no debe incluir datos sensibles.
+La lógica de negocio actual de Yellow Airline ya no es la de un MVP mínimo básico. El sistema ya integra:
 
-## Riesgos detectados
+- descubrimiento de vuelos
+- pricing dinámico
+- autenticación
+- reserva autenticada
+- pago real en modo test con Stripe
+- creación de reserva tras webhook
+- consulta de reservas
+- boarding pass en PDF
 
-1. Tipos frontend y backend desalineados
-2. Reserva actual sin estado de pago
-3. Posible duplicado si un webhook se procesa más de una vez
-4. Inconsistencia si el precio se calcula en frontend
-5. Webhook Stripe roto si no se maneja el raw body
-6. `@@unique([userId, flightId])` limita reservas repetidas del mismo vuelo por usuario, lo cual hoy parece deseado
+La clave conceptual más importante del sistema es esta:
 
-## Orden recomendado de implementación
-
-1. Ajustar Prisma y tipos
-2. Crear utilidad de pricing
-3. Actualizar `GET /api/flights`
-4. Crear checkout session
-5. Implementar webhook Stripe
-6. Actualizar `FlightCard`
-7. Actualizar `MyBookings`
-8. Implementar PDF con QR
-9. Validar build y lint
-
-## Validaciones previstas
-
-### Frontend
-- `npm run lint`
-- `npm run build`
-
-### Backend
-- `npm run build`
-
-### Prueba manual de Stripe
-Tarjeta test:
-- `4242 4242 4242 4242`
-
-Fecha:
-- cualquier fecha futura válida
-
-CVC:
-- cualquier 3 dígitos
-
-## Resultado esperado
-El usuario podrá:
-
-1. Buscar vuelos con precio dinámico visible
-2. Pagar una reserva con Stripe en modo test
-3. Ver su reserva confirmada
-4. Descargar su boarding pass en PDF con QR
+> el frontend guía la experiencia, pero el backend mantiene la verdad del negocio.

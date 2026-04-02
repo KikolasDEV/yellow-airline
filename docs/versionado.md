@@ -1,101 +1,200 @@
-# Versionado y releases
+# Versionado y Releases
 
-## Estrategia
+## Objetivo
 
-El repositorio usa versionado automatico con Release Please.
+Automatizar el versionado del proyecto sin tener que editar versiones y changelogs manualmente cada vez.
 
-Paquetes versionados:
+El repositorio usa `release-please` y sigue una estrategia separada para:
 
 - `client`
 - `server`
 
-## Como funciona
+## Estado actual
 
-1. Haces merge de cambios en `main`.
-2. GitHub Action ejecuta `release-please`.
-3. Se abre o actualiza una PR de release.
-4. Esa PR propone nuevas versiones y changelog.
-5. Al mergearla, quedan publicadas las nuevas versiones en el historial del repositorio.
+Versiones actuales registradas:
 
-## Flujo exacto cuando haces push
+- `client`: `1.3.0`
+- `server`: `1.3.0`
 
-### Si haces push a una rama de feature
+Archivos de estado:
 
-- Se ejecuta CI (`.github/workflows/ci.yml`).
-- Release Please no versiona desde ramas feature.
-- Aqui solo validas calidad antes del merge.
+- `.release-please-manifest-client.json`
+- `.release-please-manifest-server.json`
 
-### Si haces merge/push a `main`
+## Cómo funciona ahora
 
-- Se dispara `.github/workflows/release-please.yml`.
-- Release Please analiza los commits desde la ultima release cerrada.
-- Genera o actualiza una PR de release.
-- Esa PR contiene:
-  - bump de version en `client/package.json` y/o `server/package.json`
-  - actualizacion de changelog por paquete
+## Flujo normal
 
-### Cuando mergeas la PR de release
+1. Trabajas en una rama de feature.
+2. Abres PR contra `main`.
+3. La CI valida calidad.
+4. Haces merge a `main`.
+5. Se ejecuta `Release Please`.
+6. `Release Please` crea o actualiza PRs de release si detecta cambios liberables.
+7. Al mergear la PR de release, quedan actualizados:
+   - `package.json`
+   - `CHANGELOG.md`
+   - manifest correspondiente
+   - tag de release
 
-- Se consolidan las nuevas versiones en el repo.
-- Queda el historial de cambios documentado automaticamente.
+## Qué se ejecuta en `main`
 
-## Que tienes que hacer para que se actualice bien
+Workflow: `.github/workflows/release-please.yml`
 
-1. Trabajar con ramas normales y abrir PR a `main`.
-2. Escribir commits con Conventional Commits.
-3. Hacer merge a `main`.
-4. Esperar a que Release Please abra/actualice la PR de release.
-5. Revisar y mergear esa PR.
+Se dispara en:
 
-Sin el paso 5, la version no se aplica.
+- `push` a `main`
+- `workflow_dispatch` manual
 
-## Como calcula el tipo de version
+## Qué jobs existen
 
-- `fix:` incrementa patch (`1.2.3 -> 1.2.4`)
-- `feat:` incrementa minor (`1.2.3 -> 1.3.0`)
-- cambio breaking incrementa major (`1.2.3 -> 2.0.0`)
+### `release-please-client`
 
-Para marcar breaking change:
+Usa:
 
-- usa `feat!:` o `fix!:` en el titulo del commit, o
-- incluye `BREAKING CHANGE:` en el cuerpo del commit
+- `release-please-client-config.json`
+- `.release-please-manifest-client.json`
 
-## Reglas recomendadas para commits
+### `release-please-server`
 
-Usa Conventional Commits para que el versionado automatico detecte bien el tipo de cambio:
+Usa:
+
+- `release-please-server-config.json`
+- `.release-please-manifest-server.json`
+
+## Por qué se separó por componente
+
+Antes, el proyecto compartía un único config/manifest para `client` y `server`.
+
+Eso provocó conflictos cuando había PRs de release separadas, porque ambas podían tocar el mismo archivo de estado.
+
+La solución actual fue separar completamente:
+
+- configuración
+- manifiestos
+- jobs del workflow
+
+### Ventaja
+
+Ahora cada release toca solo su propio ámbito.
+
+Ejemplo:
+
+- release de `client` -> no debería pelearse con el manifest de `server`
+- release de `server` -> no debería pelearse con el manifest de `client`
+
+## Conventional Commits
+
+`release-please` calcula el tipo de bump según el tipo de commit.
+
+### Reglas principales
+
+- `fix:` -> patch
+- `feat:` -> minor
+- `feat!:` o `fix!:` -> major
+- `BREAKING CHANGE:` en el body -> major
+
+### Tipos recomendados en este repo
 
 - `feat:` nueva funcionalidad
-- `fix:` correccion de bug
-- `docs:` cambios de documentacion
+- `fix:` corrección de bug
+- `docs:` cambios de documentación
 - `chore:` mantenimiento
 - `refactor:` refactor sin cambio funcional
-- `test:` cambios en testing
-- `ci:` cambios de pipelines
+- `test:` cambios de testing
+- `ci:` cambios en workflows o automatización
 
-Ejemplos:
+### Ejemplos
 
 ```text
-feat: add automated CI pipeline
-fix: prevent negative booking totals
-test: add home page smoke e2e
-docs: document testing strategy
+feat: add multilingual booking flow
+fix: restore e2e compatibility
+docs: update testing guide
+ci: split release-please by component
 ```
 
-## Archivos implicados
+## Cuándo se crea una PR de release
+
+No siempre se crea una PR de release nueva al ejecutar el workflow.
+
+Solo se crea si `release-please` detecta commits liberables para ese componente.
+
+Eso significa:
+
+- puede aparecer PR para `client` y no para `server`
+- puede aparecer PR para `server` y no para `client`
+- pueden aparecer las dos
+- puede no aparecer ninguna
+
+## Cómo ejecutar Release Please manualmente
+
+Como el workflow soporta `workflow_dispatch`, puedes lanzarlo manualmente desde GitHub:
+
+1. ir a `Actions`
+2. abrir `Release Please`
+3. pulsar `Run workflow`
+4. seleccionar `main`
+5. ejecutar
+
+Esto es útil cuando:
+
+- quieres regenerar PRs de release
+- acabas de limpiar ramas viejas de release
+- quieres forzar una reevaluación sin esperar otro merge
+
+## Notas de release con IA
+
+Después de crear una release, el workflow puede reescribir las notas con Gemini si existe el secreto:
+
+- `GEMINI_API_KEY`
+
+Si ese secreto no existe, `release-please` sigue funcionando igualmente, pero deja notas normales por defecto.
+
+## Problemas que ya ocurrieron y qué significan
+
+### Conflictos entre PRs de release
+
+Significaban que el estado compartido de release estaba mal aislado.
+
+Eso ya se corrigió separando client y server.
+
+### Errores por ramas stale de `release-please`
+
+A veces GitHub o `release-please` mantienen referencias internas a PRs/ramas antiguas cerradas.
+
+La solución práctica fue:
+
+- borrar ramas remotas stale de `release-please`
+- relanzar el workflow manualmente
+
+## Archivos importantes
 
 - `.github/workflows/release-please.yml`
-- `release-please-config.json`
-- `.release-please-manifest.json`
+- `release-please-client-config.json`
+- `release-please-server-config.json`
+- `.release-please-manifest-client.json`
+- `.release-please-manifest-server.json`
+- `client/CHANGELOG.md`
+- `server/CHANGELOG.md`
+- `client/package.json`
+- `server/package.json`
 
-## Secretos requeridos
+## Recomendación operativa
 
-- `GEMINI_API_KEY`: usado para generar notas de release personalizadas con `gemini-2.5-flash`.
-- Si no existe este secreto, Release Please seguira funcionando, pero no se reescribiran notas con IA.
+El flujo correcto de trabajo debería ser:
 
-## Nota operativa importante
+1. desarrollar en rama feature
+2. abrir PR a `main`
+3. pasar CI
+4. mergear a `main`
+5. dejar que `release-please` abra PRs de release
+6. revisar esas PRs
+7. mergearlas
 
-Release Please necesita permisos para crear y actualizar PRs en el repositorio. En GitHub, revisa que Actions tenga permiso de `Read and write` para pull requests y contents si en algun momento deja de abrir la PR de release.
+No conviene editar versiones manualmente salvo en casos muy excepcionales.
 
-## Limitacion importante
+## Resumen
 
-Release Please genera buenas versiones cuando el historial de commits describe correctamente el cambio. Si los commits no siguen una convencion, la automatizacion pierde precision.
+El versionado actual del proyecto ya está preparado para trabajar con frontend y backend como componentes liberables por separado.
+
+Eso hace el sistema más robusto y reduce el riesgo de conflictos en futuras releases.
