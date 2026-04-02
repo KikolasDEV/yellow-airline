@@ -19,7 +19,7 @@ export const AnimatedRoute = ({ origin, destination, compact = false }: Animated
         <div className="route-line" />
         <motion.span
           className="route-plane"
-          animate={{ x: ['0%', '88%', '0%'] }}
+          animate={{ x: ['0%', '88%', '0%'], y: [0, -2, 0], scale: [1, 1.06, 1] }}
           transition={{ duration: compact ? 5 : 8, repeat: Infinity, ease: 'easeInOut' }}
         >
           ✈

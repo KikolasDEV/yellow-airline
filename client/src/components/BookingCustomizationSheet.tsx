@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { PassengerSelector } from './PassengerSelector';
 import { SeatMap } from './SeatMap';
 import { AnimatedRoute } from './AnimatedRoute';
+import { translatePlaceLabel } from '../lib/places';
 import { calculateBookingTotal, calculateSeatUpgradeTotal } from '../lib/pricing';
 import type { Flight, PassengerCount, SeatOption } from '../types';
 
@@ -45,9 +47,12 @@ const defaultPassengers: PassengerCount = {
 };
 
 export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }: BookingCustomizationSheetProps) => {
+  const { t } = useTranslation();
   const [passengers, setPassengers] = useState<PassengerCount>(defaultPassengers);
   const [selectedSeatIds, setSelectedSeatIds] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const localizedOrigin = translatePlaceLabel(flight.origin, t);
+  const localizedDestination = translatePlaceLabel(flight.destination, t);
 
   const seats = useMemo(() => createSeatLayout(), []);
   const payablePassengers = passengers.adults + passengers.children;
@@ -59,6 +64,14 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
       setSelectedSeatIds([]);
       setIsSubmitting(false);
     }
+  }, [isOpen]);
+
+  useEffect(() => {
+    document.body.classList.toggle('sheet-open', isOpen);
+
+    return () => {
+      document.body.classList.remove('sheet-open');
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -86,6 +99,7 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
     extraTotal,
   });
   const canConfirm = payablePassengers === 0 || selectedSeatIds.length === payablePassengers;
+  const occupancyLabel = `${selectedSeatIds.length}/${payablePassengers || 0}`;
 
   const handleConfirm = async () => {
     if (!canConfirm) {
@@ -127,32 +141,49 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
             exit={{ opacity: 0, y: 24 }}
             transition={{ duration: 0.28, ease: 'easeOut' }}
           >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="eyebrow">Customize booking</p>
-                <h3 className="section-title text-2xl">Design your cabin experience</h3>
-                <p className="section-copy max-w-2xl">Window, aisle or exit-row. Build a smoother trip before confirming the booking.</p>
+            <div className="sheet-header-band mb-6">
+              <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <p className="eyebrow">{t('booking_customize_eyebrow')}</p>
+                  <h3 className="section-title text-3xl md:text-5xl">{t('booking_customize_title')}</h3>
+                  <p className="section-copy mt-3 max-w-2xl">{t('booking_customize_copy')}</p>
+                </div>
+                <div className="flex items-center gap-3 self-start md:flex-col md:items-end">
+                  <div className="booking-chip booking-chip-strong">{t('booking_seats_label')} {occupancyLabel}</div>
+                  <button type="button" className="icon-button" onClick={onClose}>✕</button>
+                </div>
               </div>
-              <button type="button" className="icon-button" onClick={onClose}>✕</button>
             </div>
 
             <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_360px]">
               <div className="space-y-6">
-                <section className="surface-card p-5">
-                  <div className="space-y-4">
-                    <div>
-                      <p className="eyebrow">Selected Route</p>
-                      <h4 className="text-2xl font-black tracking-tight text-[var(--text-primary)]">{flight.origin} to {flight.destination}</h4>
+                <section className="surface-card p-5 md:p-6">
+                  <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-end">
+                    <div className="space-y-4">
+                      <div>
+                        <p className="eyebrow">{t('booking_selected_route')}</p>
+                        <h4 className="display-title text-4xl text-[var(--text-primary)] md:text-5xl">{localizedOrigin} → {localizedDestination}</h4>
+                      </div>
+                      <AnimatedRoute origin={localizedOrigin} destination={localizedDestination} />
                     </div>
-                    <AnimatedRoute origin={flight.origin} destination={flight.destination} />
+                    <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                      <div className="stat-tile">
+                        <p className="stat-kicker">{t('booking_base_fare')}</p>
+                        <p className="stat-value mt-3">{flight.basePrice.toFixed(0)}€</p>
+                      </div>
+                      <div className="stat-tile">
+                        <p className="stat-kicker">{t('booking_dynamic_fare')}</p>
+                        <p className="stat-value mt-3">{flight.finalPrice.toFixed(0)}€</p>
+                      </div>
+                    </div>
                   </div>
                 </section>
 
-                <section className="surface-card p-5">
+                <section className="surface-card p-5 md:p-6">
                   <PassengerSelector count={passengers} setCount={setPassengers} />
                 </section>
 
-                <section className="surface-card p-5">
+                <section className="surface-card p-5 md:p-6">
                   <SeatMap
                     seats={seats}
                     selectedSeatIds={selectedSeatIds}
@@ -162,45 +193,54 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
                 </section>
               </div>
 
-              <div className="surface-card h-fit p-5">
+              <div className="surface-card h-fit p-5 md:p-6 xl:sticky xl:top-6">
                 <div className="space-y-4">
+                  <p className="eyebrow">{t('booking_customize_eyebrow')}</p>
                   <div>
-                    <p className="eyebrow">Fare Summary</p>
-                    <h4 className="text-xl font-black text-[var(--text-primary)]">{flight.destination} cabin stack</h4>
+                    <p className="eyebrow">{t('booking_fare_summary')}</p>
+                    <h4 className="section-title text-3xl">{t('booking_cabin_stack', { destination: localizedDestination })}</h4>
+                    <p className="section-copy mt-2">{t('booking_fare_summary_copy')}</p>
                   </div>
 
                   <div className="summary-line">
-                    <span>Base fare</span>
+                    <span>{t('booking_base_fare')}</span>
                     <strong>{flight.basePrice.toFixed(2)}€</strong>
                   </div>
                   <div className="summary-line">
-                    <span>Dynamic fare</span>
+                    <span>{t('booking_dynamic_fare')}</span>
                     <strong>{flight.finalPrice.toFixed(2)}€</strong>
                   </div>
                   <div className="summary-line">
-                    <span>Passengers with seats</span>
+                    <span>{t('booking_passengers_with_seats')}</span>
                     <strong>{payablePassengers}</strong>
                   </div>
                   <div className="summary-line">
-                    <span>Seat upgrade</span>
+                    <span>{t('booking_seat_upgrade')}</span>
                     <strong>{extraTotal.toFixed(2)}€</strong>
                   </div>
                   <div className="summary-line">
-                    <span>Selected seats</span>
-                    <strong>{selectedSeatIds.length > 0 ? selectedSeatIds.join(', ') : 'Pending'}</strong>
+                    <span>{t('booking_selected_seats')}</span>
+                    <strong>{selectedSeatIds.length > 0 ? selectedSeatIds.join(', ') : t('booking_selected_seats_pending')}</strong>
                   </div>
 
-                  <div className="summary-total">
-                    <span>Total estimated</span>
-                    <strong>{totalPrice.toFixed(2)}€</strong>
+                  <div className="rounded-[1.35rem] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface-elevated)_84%,transparent_16%)] p-4 text-sm text-[var(--text-secondary)]">
+                    <p className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('booking_cabin_note')}</p>
+                    <p className="mt-2 leading-7">{t('booking_cabin_note_copy')}</p>
                   </div>
 
-                  <button type="button" className="cta-primary w-full justify-center" disabled={!canConfirm || isSubmitting} onClick={handleConfirm}>
-                    {isSubmitting ? 'Confirming...' : 'Confirm Booking'}
-                  </button>
-                  {!canConfirm && (
-                    <p className="text-sm text-[var(--text-secondary)]">Select one seat per adult or child before confirming.</p>
-                  )}
+                  <div className="summary-actions">
+                    <div className="summary-total">
+                      <span>{t('booking_total_estimated')}</span>
+                      <strong>{totalPrice.toFixed(2)}€</strong>
+                    </div>
+
+                    <button type="button" className="cta-primary w-full justify-center" disabled={!canConfirm || isSubmitting} onClick={handleConfirm}>
+                      {isSubmitting ? t('booking_confirming') : t('booking_confirm')}
+                    </button>
+                    {!canConfirm && (
+                      <p className="text-sm text-[var(--text-secondary)]">{t('booking_missing_seats')}</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

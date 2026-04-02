@@ -46,12 +46,14 @@ export interface SearchInsight {
 
 export interface OfferCard {
   id: string;
-  title: string;
+  titleKey: string;
+  countryLabelKey: string;
+  cityLabelKey?: string;
   country: string;
   city?: string;
   matchTerms: string[];
   discountLabel: string;
-  description: string;
+  descriptionKey: string;
   theme: 'gold' | 'sunset' | 'night';
   destinationPreset?: string;
   originPreset?: string;

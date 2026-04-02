@@ -20,6 +20,7 @@ async function main() {
     { origin: 'Sevilla', destination: 'Londres', departureTime: new Date('2026-05-11T08:00:00Z'), price: 120.00, capacity: 150 },
     { origin: 'Madrid', destination: 'Roma', departureTime: new Date('2026-05-12T12:00:00Z'), price: 65.25, capacity: 180 },
     { origin: 'Valencia', destination: 'Berlín', departureTime: new Date('2026-05-13T18:45:00Z'), price: 95.00, capacity: 180 },
+    { origin: 'Bilbao', destination: 'Amsterdam', departureTime: new Date('2026-05-15T09:20:00Z'), price: 109.00, capacity: 180 },
     { origin: 'Madrid', destination: 'Tokio', departureTime: new Date('2026-06-01T22:00:00Z'), price: 550.00, capacity: 300 }, // Avión más grande para largo radio
   ];
 

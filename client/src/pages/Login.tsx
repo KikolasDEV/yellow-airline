@@ -27,7 +27,7 @@ export const Login = () => {
         navigate('/');
         toast.success(`${t('login_success_prefix')} ${data.user.name}!`);
       } else {
-        toast.error(data.error || 'Login failed');
+        toast.error(t('login_failed'));
       }
     } catch {
       toast.error(t('login_connection_error'));
@@ -35,34 +35,44 @@ export const Login = () => {
   };
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-6 py-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-      <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="hero-shell p-8 md:p-10">
+    <div className="mx-auto grid max-w-7xl gap-6 py-4 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
+      <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="hero-shell p-6 md:p-8 lg:p-10">
         <div className="relative z-10 space-y-6">
-          <p className="eyebrow">VIP Access</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="promo-badge">{t('login_badge_member')}</span>
+            <span className="promo-badge">{t('login_badge_responsive')}</span>
+          </div>
+          <p className="eyebrow">{t('login_eyebrow')}</p>
           <div className="space-y-3">
-            <h1 className="text-5xl font-black tracking-[-0.08em] text-white">{t('welcome_back')}</h1>
-            <p className="max-w-lg text-sm leading-7 text-white/72">{t('vip_access_copy')}</p>
+            <h1 className="display-title text-5xl text-white md:text-6xl">{t('welcome_back')}</h1>
+            <p className="max-w-lg text-sm leading-7 text-white/72 md:text-base md:leading-8">{t('vip_access_copy')}</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-[1.5rem] border border-white/10 bg-white/6 p-4 text-white/78">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">Fast lane</p>
-              <p className="mt-2 text-sm">Jump back into the new interactive booking flow with seat selection and tailored deals.</p>
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">{t('login_fast_lane')}</p>
+              <p className="mt-2 text-sm">{t('login_fast_lane_copy')}</p>
             </div>
             <div className="rounded-[1.5rem] border border-white/10 bg-white/6 p-4 text-white/78">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">Dark mode</p>
-              <p className="mt-2 text-sm">The experience keeps the same premium tone in bright or low-light environments.</p>
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">{t('login_dark_mode')}</p>
+              <p className="mt-2 text-sm">{t('login_dark_mode_copy')}</p>
             </div>
           </div>
         </div>
       </motion.section>
 
-      <motion.form initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleLogin} className="surface-card space-y-5 p-8 md:p-10">
+      <motion.form initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleLogin} className="surface-card space-y-5 p-6 md:p-8 lg:p-10">
         <div>
-          <p className="eyebrow">Sign In</p>
-          <h2 className="section-title mt-2 text-3xl">Board your account</h2>
+          <p className="eyebrow">{t('login_sign_in')}</p>
+          <h2 className="section-title mt-2 text-3xl md:text-5xl">{t('login_board_account')}</h2>
+          <p className="section-copy mt-3 max-w-xl">{t('login_form_copy')}</p>
         </div>
 
-        <div className="space-y-4">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-[1.35rem] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface-elevated)_84%,transparent_16%)] p-4 sm:col-span-2">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('login_cabin_note')}</p>
+            <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{t('login_cabin_note_copy')}</p>
+          </div>
+
           <label className="block space-y-2">
             <span className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('email')}</span>
             <input
@@ -88,7 +98,7 @@ export const Login = () => {
           </label>
         </div>
 
-        <button className="cta-primary w-full justify-center">{t('login_cta')}</button>
+        <button className="cta-primary w-full justify-center sm:w-auto sm:min-w-[220px]">{t('login_cta')}</button>
 
         <p className="text-sm text-[var(--text-secondary)]">
           {t('join_vip_prompt')}{' '}

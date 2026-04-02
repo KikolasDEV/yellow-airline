@@ -17,29 +17,44 @@ export const VipZone = () => {
   }, [navigate, t]);
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-6 py-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-      <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="hero-shell p-8 md:p-10">
-        <div className="relative z-10 space-y-6 text-white">
-          <p className="eyebrow">Yellow Gold</p>
-          <div className="space-y-3">
-            <h1 className="text-5xl font-black tracking-[-0.08em]">{t('vip_title')}</h1>
-            <p className="max-w-lg text-sm leading-7 text-white/72">{t('vip_description')}</p>
+    <div className="mx-auto grid max-w-7xl gap-6 py-4 lg:grid-cols-[0.98fr_1.02fr] lg:items-stretch">
+      <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="hero-shell p-6 md:p-8 lg:p-10">
+        <div className="relative z-10 flex h-full flex-col justify-between gap-8 text-white">
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="promo-badge">{t('vip_badge_priority')}</span>
+              <span className="promo-badge">{t('vip_badge_concierge')}</span>
+            </div>
+            <p className="eyebrow">Yellow Gold</p>
+            <div className="space-y-3">
+              <h1 className="display-title text-5xl md:text-6xl">{t('vip_title')}</h1>
+              <p className="max-w-lg text-sm leading-7 text-white/72 md:text-base md:leading-8">{t('vip_description')}</p>
+            </div>
           </div>
+
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-[1.5rem] border border-white/10 bg-white/6 p-4 text-sm text-white/76">
-              Priority offers triggered by your real search behavior.
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">{t('vip_adaptive_perks')}</p>
+              <p className="mt-2 leading-7">{t('vip_adaptive_perks_copy')}</p>
             </div>
             <div className="rounded-[1.5rem] border border-white/10 bg-white/6 p-4 text-sm text-white/76">
-              Rich booking flow with tactile passengers and interactive seat choices.
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">{t('vip_booking_depth')}</p>
+              <p className="mt-2 leading-7">{t('vip_booking_depth_copy')}</p>
             </div>
+          </div>
+
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/10 p-4 backdrop-blur-xl">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">{t('vip_why_join')}</p>
+            <p className="mt-3 max-w-xl text-sm leading-7 text-white/74">{t('vip_why_join_copy')}</p>
           </div>
         </div>
       </motion.section>
 
-      <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="surface-card p-8 md:p-10">
-        <div className="mb-6 space-y-2">
-          <p className="eyebrow">Membership Request</p>
-          <h2 className="section-title text-3xl">Join the premium cabin circle</h2>
+      <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="surface-card p-6 md:p-8 lg:p-10">
+        <div className="mb-6 space-y-3">
+          <p className="eyebrow">{t('vip_membership_request')}</p>
+          <h2 className="section-title text-3xl md:text-5xl">{t('vip_join_circle')}</h2>
+          <p className="section-copy max-w-2xl">{t('vip_form_copy')}</p>
         </div>
         <VipForm />
       </motion.section>

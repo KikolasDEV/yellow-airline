@@ -27,10 +27,25 @@ export const PassengerSelector = ({ count, setCount }: PassengerProps) => {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="eyebrow">Cabin Mix</p>
-          <p className="text-sm text-[var(--text-secondary)]">Tap-friendly counters with soft motion and live totals.</p>
+          <p className="eyebrow">{t('passenger_selector_eyebrow')}</p>
+          <p className="text-sm text-[var(--text-secondary)]">{t('passenger_selector_copy')}</p>
         </div>
-        <div className="booking-chip booking-chip-strong">{count.adults + count.children + count.infants} total</div>
+        <div className="booking-chip booking-chip-strong">{t('passenger_total', { count: count.adults + count.children + count.infants })}</div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="stat-tile">
+          <p className="stat-kicker">{t('Adultos')}</p>
+          <p className="stat-value mt-3">{count.adults}</p>
+        </div>
+        <div className="stat-tile">
+          <p className="stat-kicker">{t('Children')}</p>
+          <p className="stat-value mt-3">{count.children}</p>
+        </div>
+        <div className="stat-tile">
+          <p className="stat-kicker">{t('Infants')}</p>
+          <p className="stat-value mt-3">{count.infants}</p>
+        </div>
       </div>
       
       {[
@@ -59,7 +74,7 @@ export const PassengerSelector = ({ count, setCount }: PassengerProps) => {
               type="button"
               whileTap={{ scale: 0.9 }}
               onClick={() => update(p.id, 1)}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--text-primary)] text-sm text-[var(--text-inverse)]"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--text-primary)] text-sm text-[var(--text-inverse)] shadow-[0_12px_24px_rgba(15,23,42,0.18)]"
             >+</motion.button>
           </div>
         </motion.div>
