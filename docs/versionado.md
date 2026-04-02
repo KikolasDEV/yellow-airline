@@ -87,6 +87,11 @@ docs: document testing strategy
 - `release-please-config.json`
 - `.release-please-manifest.json`
 
+## Secretos requeridos
+
+- `OPENAI_API_KEY`: usado para generar notas de release personalizadas con `gpt-4o-mini`.
+- Si no existe este secreto, Release Please seguira funcionando, pero no se reescribiran notas con IA.
+
 ## Nota operativa importante
 
 Release Please necesita permisos para crear y actualizar PRs en el repositorio. En GitHub, revisa que Actions tenga permiso de `Read and write` para pull requests y contents si en algun momento deja de abrir la PR de release.
