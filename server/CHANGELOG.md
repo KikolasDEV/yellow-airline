@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/KikolasDEV/yellow-airline/compare/server-1.1.0...server-1.1.1) (2026-04-02)
+
+
+### Bug Fixes
+
+* **server:** normalize passenger counts before persisting bookings ([2972b1d](https://github.com/KikolasDEV/yellow-airline/commit/2972b1dfbe29e309608d6b5642339e381e7ca7d3))
+
 ## [1.1.0](https://github.com/KikolasDEV/yellow-airline/compare/server-1.0.0...server-1.1.0) (2026-04-02)
 
 
