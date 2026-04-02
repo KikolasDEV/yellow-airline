@@ -3,11 +3,16 @@ import cors from 'cors';
 import flightRoutes from './routes/flightRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 
 const app = express();
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+
 app.use(cors({
-  origin: 'http://localhost:5173' 
+  origin: CLIENT_URL
 }));
+
+app.use('/api/payments', paymentRoutes);
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;

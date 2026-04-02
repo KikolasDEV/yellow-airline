@@ -5,6 +5,8 @@ import { Home } from './pages/Home';
 import { VipZone } from './pages/VipZone';
 import { Login } from './pages/Login';
 import { MyBookings } from './pages/MyBookings';
+import { CheckoutSuccess } from './pages/CheckoutSuccess';
+import { CheckoutCancel } from './pages/CheckoutCancel';
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from './components/ThemeProvider';
 
@@ -31,6 +33,8 @@ function App() {
             <Route path="vip" element={<VipZone />} />
             <Route path="login" element={<Login />} />
             <Route path="/my-bookings" element={<MyBookings />} />
+            <Route path="/success" element={<CheckoutSuccess />} />
+            <Route path="/cancel" element={<CheckoutCancel />} />
           </Route>
         </Routes>
       </BrowserRouter>

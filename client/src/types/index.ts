@@ -1,13 +1,35 @@
 // Vuelo estandar
 export interface Flight {
   id: number;
-  number?: string;
   origin: string;
   destination: string;
   departureTime: string;
   price: number;
-  availableSeats?: number;
-  capacity?: number;
+  basePrice: number;
+  finalPrice: number;
+  availableSeats: number;
+  occupancyRate: number;
+  urgencyFactor?: number;
+  capacity: number;
+}
+
+export type BookingStatus = 'PENDING' | 'PAID' | 'FAILED' | 'CANCELLED';
+
+export interface Booking {
+  id: number;
+  userId: number;
+  flightId: number;
+  adults: number;
+  children: number;
+  infants: number;
+  basePrice: number;
+  finalPrice: number;
+  currency: string;
+  status: BookingStatus;
+  bookingReference: string;
+  stripeSessionId: string | null;
+  createdAt: string;
+  flight: Flight;
 }
 
 export interface PassengerCount {
