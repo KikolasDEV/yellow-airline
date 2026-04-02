@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.3](https://github.com/KikolasDEV/yellow-airline/compare/server-1.1.2...server-1.1.3) (2026-04-02)
+
+
+### Bug Fixes
+
+* **server:** validate flight id before booking checks ([5a15a6f](https://github.com/KikolasDEV/yellow-airline/commit/5a15a6fca520686b064d94cc0ee5985865cf2544))
+* **server:** validate flight id before booking checks ([e3768fb](https://github.com/KikolasDEV/yellow-airline/commit/e3768fbc0040bca0c80497f1f53bc6edae7bf40a))
+
 ## [1.1.2](https://github.com/KikolasDEV/yellow-airline/compare/server-1.1.1...server-1.1.2) (2026-04-02)
 
 
