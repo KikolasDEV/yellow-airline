@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import type { MouseEvent } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { ThemeToggle } from './ThemeToggle';
@@ -7,16 +8,29 @@ import { ThemeToggle } from './ThemeToggle';
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, i18n } = useTranslation();
   const isLoggedIn = !!localStorage.getItem('token');
   const userName = localStorage.getItem('userName');
-  const isSpanish = i18n.resolvedLanguage?.startsWith('es') ?? i18n.language.startsWith('es');
-  const navLinks = isLoggedIn
-    ? [{ to: '/my-bookings', label: t('my_bookings') }]
-    : [
-        { to: '/login', label: t('login') },
-        { to: '/vip', label: t('become_vip') },
-      ];
+  const activeLanguage = i18n.resolvedLanguage?.startsWith('es') ?? i18n.language.startsWith('es') ? 'es' : 'en';
+
+  const jumpToSection = (sectionId: string) => {
+    const scrollToTarget = () => {
+      window.requestAnimationFrame(() => {
+        const target = document.getElementById(sectionId);
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    };
+
+    if (location.pathname !== '/') {
+      navigate('/');
+      window.setTimeout(scrollToTarget, 160);
+    } else {
+      scrollToTarget();
+    }
+
+    setIsMenuOpen(false);
+  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -26,45 +40,69 @@ export const Navbar = () => {
     window.location.reload();
   };
 
-  const toggleLanguage = () => {
-    const newLang = isSpanish ? 'en' : 'es';
-    i18n.changeLanguage(newLang);
+  const setLanguage = (languageCode: 'es' | 'en') => {
+    i18n.changeLanguage(languageCode);
+  };
+
+  const handleBrandClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    setIsMenuOpen(false);
+    navigate('/');
+    window.setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 120);
   };
 
   return (
-    <nav className="sticky top-0 z-30 px-4 py-4 md:px-6 lg:px-8">
+    <nav className="navbar-shell fixed inset-x-0 top-0 z-40 px-4 py-4 md:px-6 lg:px-8">
       <div className="mx-auto flex max-w-[1440px] flex-col gap-3">
         <div className="flex items-center justify-between gap-4 rounded-[1.75rem] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface-elevated)_88%,transparent_12%)] px-4 py-3 shadow-[var(--shadow-soft)] backdrop-blur-2xl md:px-6">
-          <Link to="/" className="flex min-w-0 items-center gap-3 transition-transform hover:scale-[1.01]" onClick={() => setIsMenuOpen(false)}>
+          <Link to="/" className="flex min-w-0 items-center gap-3 transition-transform hover:scale-[1.01]" onClick={handleBrandClick}>
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent)] text-lg font-black text-slate-950 shadow-[0_16px_30px_rgba(244,197,28,0.28)]">
               YA
             </span>
             <span className="min-w-0">
-              <span className="hidden truncate text-sm font-black tracking-[0.28em] text-[var(--text-muted)] min-[440px]:block md:text-xs">{t('nav_editorial_cabin')}</span>
-              <span className="display-title block truncate text-[1.65rem] text-[var(--text-primary)] min-[440px]:text-2xl md:text-[2.15rem]">
+              <span className="hidden truncate text-sm font-semibold tracking-[0.18em] text-[var(--text-muted)] min-[440px]:block md:text-xs">{t('nav_editorial_cabin')}</span>
+              <span className="display-title block truncate text-[1.5rem] text-[var(--text-primary)] min-[440px]:text-[1.9rem] md:text-[2rem]">
                 Yellow Airline <span className="text-[var(--accent-strong)]">Gold</span>
               </span>
             </span>
           </Link>
 
           <div className="hidden items-center gap-5 lg:flex">
-            {navLinks.map((item) => (
-              <Link key={item.to} to={item.to} className="nav-link">
-                {item.label}
-              </Link>
-            ))}
+            <button type="button" className="nav-link" onClick={() => jumpToSection('offers-section')}>
+              {t('nav_offers')}
+            </button>
+            <button type="button" className="nav-link" onClick={() => jumpToSection('inventory-section')}>
+              {t('nav_flights')}
+            </button>
             {isLoggedIn && userName && (
               <span className="rounded-full border border-[var(--border-soft)] px-3 py-2 text-xs font-bold text-[var(--text-primary)]">
-                {t('greeting')}, {userName.toUpperCase()}
+                {t('greeting')}, {userName}
               </span>
             )}
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
             <ThemeToggle />
-            <button onClick={toggleLanguage} className="icon-button w-auto px-3 text-xs font-black">
-              {isSpanish ? 'EN' : 'ES'}
-            </button>
+            <div className="lang-switch" role="group" aria-label="Language selector">
+              <button
+                type="button"
+                onClick={() => setLanguage('es')}
+                className={activeLanguage === 'es' ? 'lang-flag lang-flag-active' : 'lang-flag'}
+                aria-label="Cambiar a español"
+              >
+                🇪🇸
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('en')}
+                className={activeLanguage === 'en' ? 'lang-flag lang-flag-active' : 'lang-flag'}
+                aria-label="Switch to English"
+              >
+                🇬🇧
+              </button>
+            </div>
             {isLoggedIn ? (
               <div className="hidden lg:block">
                 <button onClick={handleLogout} className="cta-secondary px-4 py-3 text-[0.72rem]">
@@ -72,7 +110,10 @@ export const Navbar = () => {
                 </button>
               </div>
             ) : (
-              <div className="hidden lg:block">
+              <div className="hidden items-center gap-2 lg:flex">
+                <button onClick={() => navigate('/login')} className="cta-secondary px-4 py-3 text-[0.72rem]">
+                  {t('login')}
+                </button>
                 <button onClick={() => navigate('/vip')} className="cta-primary px-4 py-3 text-[0.72rem]">
                   {t('become_vip')}
                 </button>
@@ -100,31 +141,57 @@ export const Navbar = () => {
                 </div>
               )}
 
-              {navLinks.map((item) => (
+              <button
+                type="button"
+                className="rounded-[1.2rem] border border-[var(--border-soft)] px-4 py-3 text-left text-sm font-bold text-[var(--text-primary)]"
+                onClick={() => jumpToSection('offers-section')}
+              >
+                {t('nav_offers')}
+              </button>
+
+              <button
+                type="button"
+                className="rounded-[1.2rem] border border-[var(--border-soft)] px-4 py-3 text-left text-sm font-bold text-[var(--text-primary)]"
+                onClick={() => jumpToSection('inventory-section')}
+              >
+                {t('nav_flights')}
+              </button>
+
+              {isLoggedIn && (
                 <Link
-                  key={item.to}
-                  to={item.to}
+                  to="/my-bookings"
                   className="rounded-[1.2rem] border border-[var(--border-soft)] px-4 py-3 text-sm font-bold text-[var(--text-primary)]"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {item.label}
+                  {t('my_bookings')}
                 </Link>
-              ))}
+              )}
 
               {isLoggedIn ? (
                 <button onClick={handleLogout} className="cta-secondary">
                   {t('logout')}
                 </button>
               ) : (
-                <button
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    navigate('/vip');
-                  }}
-                  className="cta-primary"
-                >
-                  {t('become_vip')}
-                </button>
+                <>
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      navigate('/login');
+                    }}
+                    className="cta-secondary"
+                  >
+                    {t('login')}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      navigate('/vip');
+                    }}
+                    className="cta-primary"
+                  >
+                    {t('become_vip')}
+                  </button>
+                </>
               )}
             </div>
           </div>

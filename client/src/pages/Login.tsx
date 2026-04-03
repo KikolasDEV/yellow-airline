@@ -45,37 +45,37 @@ export const Login = () => {
           </div>
           <p className="eyebrow">{t('login_eyebrow')}</p>
           <div className="space-y-3">
-            <h1 className="display-title text-5xl text-white md:text-6xl">{t('welcome_back')}</h1>
-            <p className="max-w-lg text-sm leading-7 text-white/72 md:text-base md:leading-8">{t('vip_access_copy')}</p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-[1.5rem] border border-white/10 bg-white/6 p-4 text-white/78">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">{t('login_fast_lane')}</p>
-              <p className="mt-2 text-sm">{t('login_fast_lane_copy')}</p>
+              <h1 className="display-title text-[2.65rem] text-white md:text-[3.2rem]">{t('welcome_back')}</h1>
+              <p className="max-w-lg text-[0.98rem] leading-7 text-white/72">{t('vip_access_copy')}</p>
             </div>
-            <div className="rounded-[1.5rem] border border-white/10 bg-white/6 p-4 text-white/78">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">{t('login_dark_mode')}</p>
-              <p className="mt-2 text-sm">{t('login_dark_mode_copy')}</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/6 p-4 text-white/78">
+                <p className="micro-label text-white/52">{t('login_fast_lane')}</p>
+                <p className="mt-2 text-[0.92rem] leading-6">{t('login_fast_lane_copy')}</p>
+              </div>
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/6 p-4 text-white/78">
+                <p className="micro-label text-white/52">{t('login_dark_mode')}</p>
+                <p className="mt-2 text-[0.92rem] leading-6">{t('login_dark_mode_copy')}</p>
+              </div>
             </div>
-          </div>
         </div>
       </motion.section>
 
       <motion.form initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleLogin} className="surface-card space-y-5 p-6 md:p-8 lg:p-10">
         <div>
           <p className="eyebrow">{t('login_sign_in')}</p>
-          <h2 className="section-title mt-2 text-3xl md:text-5xl">{t('login_board_account')}</h2>
+          <h2 className="section-title mt-2 text-[2rem] md:text-[2.6rem]">{t('login_board_account')}</h2>
           <p className="section-copy mt-3 max-w-xl">{t('login_form_copy')}</p>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-[1.35rem] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface-elevated)_84%,transparent_16%)] p-4 sm:col-span-2">
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('login_cabin_note')}</p>
-            <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{t('login_cabin_note_copy')}</p>
+            <p className="micro-label">{t('login_cabin_note')}</p>
+            <p className="body-copy-muted mt-2">{t('login_cabin_note_copy')}</p>
           </div>
 
           <label className="block space-y-2">
-            <span className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('email')}</span>
+            <span className="micro-label">{t('email')}</span>
             <input
               type="email"
               required
@@ -87,7 +87,7 @@ export const Login = () => {
           </label>
 
           <label className="block space-y-2">
-            <span className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('password')}</span>
+            <span className="micro-label">{t('password')}</span>
             <input
               type="password"
               required

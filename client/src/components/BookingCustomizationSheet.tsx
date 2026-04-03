@@ -224,8 +224,8 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
                   </div>
 
                   <div className="rounded-[1.35rem] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface-elevated)_84%,transparent_16%)] p-4 text-sm text-[var(--text-secondary)]">
-                    <p className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('booking_cabin_note')}</p>
-                    <p className="mt-2 leading-7">{t('booking_cabin_note_copy')}</p>
+                    <p className="micro-label">{t('booking_cabin_note')}</p>
+                    <p className="body-copy-muted mt-2">{t('booking_cabin_note_copy')}</p>
                   </div>
 
                   <div className="summary-actions">

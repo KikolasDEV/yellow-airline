@@ -81,10 +81,9 @@ export const FlightCard = ({ flight }: Props) => {
   return (
     <>
       <motion.article
-        layout
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        whileHover={{ y: -4 }}
+        whileHover={{ y: -2 }}
         className="surface-card overflow-hidden p-5 md:p-6"
       >
         <div className="space-y-5">
@@ -95,7 +94,7 @@ export const FlightCard = ({ flight }: Props) => {
                 <span className="booking-chip">{t('flight_card_premium_chip')}</span>
               </div>
               <div>
-                <h3 className="display-title text-4xl text-[var(--text-primary)] md:text-5xl">{localizedDestination}</h3>
+                <h3 className="display-title text-[2.15rem] text-[var(--text-primary)] md:text-[2.65rem]">{localizedDestination}</h3>
                 <p className="text-sm text-[var(--text-secondary)]">{t('flight_card_departing_from', { origin: localizedOrigin })}</p>
               </div>
             </div>
@@ -141,7 +140,7 @@ export const FlightCard = ({ flight }: Props) => {
 
           <div className="flex flex-col gap-3 border-t border-[var(--border-soft)] pt-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('Salida')}</p>
+              <p className="micro-label">{t('Salida')}</p>
               <p className="text-sm font-bold text-[var(--text-primary)]">{formatDate(flight.departureTime)}</p>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row">

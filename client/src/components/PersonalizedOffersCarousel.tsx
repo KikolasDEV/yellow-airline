@@ -63,8 +63,8 @@ export const PersonalizedOffersCarousel = ({ offers, topDestination, onApplyOffe
                   <span className="promo-badge promo-badge-contrast">{activeOffer.discountLabel}</span>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-3xl font-black tracking-tight md:text-4xl">{t(activeOffer.titleKey)}</p>
-                  <p className="max-w-2xl text-sm leading-6 text-white/78 md:text-base">{t(activeOffer.descriptionKey)}</p>
+                  <p className="display-title text-[2rem] leading-tight md:text-[2.45rem]">{t(activeOffer.titleKey)}</p>
+                  <p className="max-w-2xl text-[0.97rem] leading-7 text-white/78">{t(activeOffer.descriptionKey)}</p>
                 </div>
                 <AnimatedRoute origin={activeOffer.originPreset ?? 'Madrid'} destination={activeOffer.destinationPreset ?? activeOffer.country} />
               </div>
@@ -88,7 +88,7 @@ export const PersonalizedOffersCarousel = ({ offers, topDestination, onApplyOffe
               className={`${index === activeIndex ? 'carousel-thumb carousel-thumb-active' : 'carousel-thumb'} min-w-[240px] xl:min-w-0`}
             >
               <span className="text-left">
-                <span className="block text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t(offer.countryLabelKey)}</span>
+                <span className="micro-label block">{t(offer.countryLabelKey)}</span>
                 <span className="block text-base font-bold text-[var(--text-primary)]">{t(offer.titleKey)}</span>
               </span>
               <span className="text-sm font-black text-[var(--accent-strong)]">{offer.discountLabel}</span>

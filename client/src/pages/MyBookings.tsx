@@ -95,7 +95,7 @@ export const MyBookings = () => {
   };
 
   if (loading) {
-    return <div className="surface-card px-6 py-16 text-center text-lg font-bold text-(--text-secondary)]">{t('load_bookings')}</div>;
+    return <div className="surface-card px-6 py-16 text-center text-lg font-bold text-[var(--text-secondary)]">{t('load_bookings')}</div>;
   }
 
   return (
@@ -106,7 +106,7 @@ export const MyBookings = () => {
             <p className="eyebrow">{t('bookings_eyebrow')}</p>
             <div className="mt-3 flex flex-col gap-4">
               <div>
-                <h1 className="section-title text-4xl md:text-6xl">{t('my_bookings')}</h1>
+                <h1 className="section-title text-[2.2rem] md:text-[3rem]">{t('my_bookings')}</h1>
                 <p className="section-copy mt-3 max-w-2xl">{t('bookings_copy')}</p>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -131,9 +131,9 @@ export const MyBookings = () => {
       </section>
 
       {bookings.length === 0 ? (
-        <div className="surface-card px-6 py-16 text-center">
-          <p className="text-xl font-semibold text-(--text-secondary)]">{t('no_bookings')}</p>
-        </div>
+          <div className="surface-card px-6 py-16 text-center">
+            <p className="text-xl font-semibold text-[var(--text-secondary)]">{t('no_bookings')}</p>
+          </div>
       ) : (
         <div className="grid gap-5">
           {bookings.map((booking) => (
@@ -145,7 +145,7 @@ export const MyBookings = () => {
                     <span className="booking-chip">{booking.bookingReference}</span>
                   </div>
                   <AnimatedRoute origin={translatePlaceLabel(booking.flight.origin, t)} destination={translatePlaceLabel(booking.flight.destination, t)} />
-                  <div className="grid gap-2 text-sm text-(--text-secondary)] sm:grid-cols-2">
+                  <div className="grid gap-2 text-sm text-[var(--text-secondary)] sm:grid-cols-2">
                     <p>{t('bookings_base')}: {formatCurrency(booking.basePrice, booking.currency, locale)}</p>
                     <p>{t('bookings_paid')}: {formatCurrency(booking.finalPrice, booking.currency, locale)}</p>
                     <p>{t('bookings_departure')}: {new Date(booking.flight.departureTime).toLocaleString(locale)}</p>
@@ -154,9 +154,9 @@ export const MyBookings = () => {
                 </div>
 
                 <div className="space-y-3 lg:text-right">
-                  <p className="text-sm font-semibold text-(--text-secondary)]">👤 {booking.adults} {t('Adultos')}</p>
-                  {booking.children > 0 && <p className="text-sm font-semibold text-(--text-secondary)]">🧒 {booking.children} {t('Children')}</p>}
-                  {booking.infants > 0 && <p className="text-sm font-semibold text-(--text-secondary)]">👶 {booking.infants} {t('Infants')}</p>}
+                  <p className="text-sm font-semibold text-[var(--text-secondary)]">👤 {booking.adults} {t('Adultos')}</p>
+                  {booking.children > 0 && <p className="text-sm font-semibold text-[var(--text-secondary)]">🧒 {booking.children} {t('Children')}</p>}
+                  {booking.infants > 0 && <p className="text-sm font-semibold text-[var(--text-secondary)]">👶 {booking.infants} {t('Infants')}</p>}
 
                   {booking.status === 'PAID' && (
                     <button type="button" aria-label="Descargar boarding pass" className="cta-primary lg:ml-auto lg:w-auto" onClick={() => downloadBoardingPass(booking)}>

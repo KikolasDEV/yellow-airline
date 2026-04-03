@@ -27,25 +27,25 @@ export const VipZone = () => {
             </div>
             <p className="eyebrow">Yellow Gold</p>
             <div className="space-y-3">
-              <h1 className="display-title text-5xl md:text-6xl">{t('vip_title')}</h1>
-              <p className="max-w-lg text-sm leading-7 text-white/72 md:text-base md:leading-8">{t('vip_description')}</p>
+              <h1 className="display-title text-[2.65rem] md:text-[3.2rem]">{t('vip_title')}</h1>
+              <p className="max-w-lg text-[0.98rem] leading-7 text-white/72">{t('vip_description')}</p>
             </div>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-[1.5rem] border border-white/10 bg-white/6 p-4 text-sm text-white/76">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">{t('vip_adaptive_perks')}</p>
-              <p className="mt-2 leading-7">{t('vip_adaptive_perks_copy')}</p>
+              <p className="micro-label text-white/52">{t('vip_adaptive_perks')}</p>
+              <p className="mt-2 text-[0.92rem] leading-7">{t('vip_adaptive_perks_copy')}</p>
             </div>
             <div className="rounded-[1.5rem] border border-white/10 bg-white/6 p-4 text-sm text-white/76">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">{t('vip_booking_depth')}</p>
-              <p className="mt-2 leading-7">{t('vip_booking_depth_copy')}</p>
+              <p className="micro-label text-white/52">{t('vip_booking_depth')}</p>
+              <p className="mt-2 text-[0.92rem] leading-7">{t('vip_booking_depth_copy')}</p>
             </div>
           </div>
 
           <div className="rounded-[1.5rem] border border-white/10 bg-black/10 p-4 backdrop-blur-xl">
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">{t('vip_why_join')}</p>
-            <p className="mt-3 max-w-xl text-sm leading-7 text-white/74">{t('vip_why_join_copy')}</p>
+            <p className="micro-label text-white/52">{t('vip_why_join')}</p>
+            <p className="mt-3 max-w-xl text-[0.92rem] leading-7 text-white/74">{t('vip_why_join_copy')}</p>
           </div>
         </div>
       </motion.section>
@@ -53,7 +53,7 @@ export const VipZone = () => {
       <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="surface-card p-6 md:p-8 lg:p-10">
         <div className="mb-6 space-y-3">
           <p className="eyebrow">{t('vip_membership_request')}</p>
-          <h2 className="section-title text-3xl md:text-5xl">{t('vip_join_circle')}</h2>
+          <h2 className="section-title text-[2rem] md:text-[2.6rem]">{t('vip_join_circle')}</h2>
           <p className="section-copy max-w-2xl">{t('vip_form_copy')}</p>
         </div>
         <VipForm />

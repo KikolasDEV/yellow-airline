@@ -28,7 +28,7 @@ export const PassengerSelector = ({ count, setCount }: PassengerProps) => {
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="eyebrow">{t('passenger_selector_eyebrow')}</p>
-          <p className="text-sm text-[var(--text-secondary)]">{t('passenger_selector_copy')}</p>
+          <p className="body-copy-muted">{t('passenger_selector_copy')}</p>
         </div>
         <div className="booking-chip booking-chip-strong">{t('passenger_total', { count: count.adults + count.children + count.infants })}</div>
       </div>
@@ -60,7 +60,7 @@ export const PassengerSelector = ({ count, setCount }: PassengerProps) => {
         >
           <div>
             <p className="text-sm font-bold leading-none text-[var(--text-primary)]">{p.label}</p>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{p.sub}</p>
+            <p className="micro-label mt-1 text-[var(--text-muted)]">{p.sub}</p>
           </div>
           <div className="flex items-center gap-3 rounded-full border border-[var(--border-soft)] px-2 py-1">
             <motion.button

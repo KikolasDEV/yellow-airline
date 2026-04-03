@@ -1,124 +1,93 @@
 # Yellow Airline
 
 <p align="center">
-  <strong>Plataforma full stack de reservas de vuelos con experiencia premium, pagos con Stripe y arquitectura moderna separada en frontend y backend.</strong>
+  <strong>Aplicación full stack de reservas de vuelos con búsqueda interactiva, autenticación, pagos con Stripe y despliegue real en producción.</strong>
 </p>
 
 <p align="center">
-  <img alt="React" src="https://img.shields.io/badge/React-19-20232A?logo=react">
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white">
-  <img alt="Vite" src="https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white">
-  <img alt="Express" src="https://img.shields.io/badge/Express-5-000000?logo=express">
-  <img alt="Prisma" src="https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma&logoColor=white">
-  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-Base%20de%20datos-4169E1?logo=postgresql&logoColor=white">
-  <img alt="Stripe" src="https://img.shields.io/badge/Stripe-Pagos-635BFF?logo=stripe&logoColor=white">
-  <img alt="Playwright" src="https://img.shields.io/badge/Playwright-E2E-2EAD33?logo=playwright&logoColor=white">
+  <a href="https://yellow-airline.vercel.app">Ver demo</a>
 </p>
 
-## ✨ Resumen
+## 🌐 Demo
 
-**Yellow Airline** es una aplicación web de reservas de vuelos orientada a simular un producto real: búsqueda de vuelos, autenticación, experiencia VIP, selección de asientos, pago con Stripe, panel de reservas y automatización de calidad y releases.
+- Frontend: `https://yellow-airline.vercel.app`
+- Backend: `https://yellow-airline-production.up.railway.app`
 
-No está planteado como una simple demo visual. El proyecto incluye muchas de las piezas que suelen aparecer en productos profesionales:
+## 🚀 Lo Más Relevante
 
-- Interfaz moderna y responsive
-- Backend con reglas de negocio reales
-- Base de datos relacional
-- Autenticación con JWT
-- Pagos con webhook
-- Tests automáticos
-- CI/CD
-- Versionado automático
+- Búsqueda de vuelos por origen, destino y fecha.
+- Calendario interactivo con resultados rápidos y reservas desde la propia búsqueda.
+- Registro, login y persistencia de sesión con JWT.
+- Flujo VIP dedicado.
+- Selección de pasajeros y asientos antes del pago.
+- Integración con Stripe Checkout y webhook.
+- Panel `My Bookings` con boarding pass en PDF y QR.
+- Soporte bilingüe `es/en` y tema claro/oscuro.
+- Despliegue separado en Vercel y Railway.
 
-## 🚀 Qué permite hacer
+## 🧰 Stack
 
-- Buscar vuelos por **origen** y **destino**.
-- Ver **precios dinámicos** según ocupación y urgencia.
-- Registrarse e iniciar sesión.
-- Acceder a una experiencia **VIP** dedicada.
-- Configurar una reserva con **pasajeros** y **asientos**.
-- Pagar mediante **Stripe Checkout**.
-- Crear la reserva real tras confirmación por **webhook**.
-- Consultar `My Bookings`.
-- Descargar un **boarding pass en PDF con QR**.
-- Usar la app en **español e inglés**.
-- Alternar entre **tema claro y oscuro**.
+### 🔹 Frontend
 
-## 🧱 Arquitectura
+![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite_8-646CFF?style=for-the-badge&logo=vite&logoColor=FFD62E)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS_4-0EA5E9?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-black?style=for-the-badge&logo=framer&logoColor=blue)
+![i18next](https://img.shields.io/badge/i18next-26AAE1?style=for-the-badge&logo=i18next&logoColor=white)
+![React Hook Form](https://img.shields.io/badge/React_Hook_Form-EC5990?style=for-the-badge&logo=reacthookform&logoColor=white)
+![Zod](https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&logo=zod&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
+
+### 🔹 Backend
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express_5-000000?style=for-the-badge&logo=express&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
+![bcrypt](https://img.shields.io/badge/bcrypt-121212?style=for-the-badge)
+![Stripe](https://img.shields.io/badge/Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
+
+### 🔹 DevOps y Calidad
+
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)
+![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)
+![Release Please](https://img.shields.io/badge/Release_Please-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)
+
+## 🏗️ Arquitectura
 
 ```text
 yellow-airline/
-  client/   -> SPA en React + Vite + TypeScript
-  server/   -> API REST en Express + Prisma + PostgreSQL
-  docs/     -> PRD, lógica de negocio, testing y versionado
-  .github/  -> workflows de CI, seguridad y releases
+  client/   SPA en React + Vite
+  server/   API REST en Express + Prisma
+  docs/     documentación funcional y operativa
 ```
 
-### Frontend
+## ✨ Funcionalidades
 
-- `React 19` + `Vite`
-- `TypeScript`
-- `Tailwind CSS`
-- `Framer Motion`
-- `i18next`
-- `react-hook-form` + `Zod`
+- Buscar vuelos por origen, destino y fecha.
+- Consultar tarifas con precio base, precio final y disponibilidad.
+- Registrarse e iniciar sesión.
+- Acceder a una experiencia VIP dedicada.
+- Seleccionar pasajeros y asientos antes de pagar.
+- Iniciar checkout con Stripe.
+- Persistir reservas tras `checkout.session.completed`.
+- Consultar reservas propias desde `My Bookings`.
+- Descargar boarding pass en PDF con QR.
 
-### Backend
-
-- `Express 5`
-- `Prisma`
-- `PostgreSQL`
-- `JWT`
-- `bcrypt`
-- `Stripe`
-
-## 🔄 Flujo principal del producto
+## 🔄 Flujo Principal
 
 ```text
-Home -> Buscar vuelos -> Elegir vuelo -> Personalizar reserva -> Stripe Checkout
--> Webhook de Stripe -> Crear reserva pagada -> My Bookings -> Boarding pass
+Home -> Buscar vuelo -> Reservar -> Personalizar -> Stripe Checkout
+-> Webhook -> Reserva PAID -> My Bookings -> Boarding pass PDF
 ```
 
-### Reglas importantes
-
-- Un usuario no puede reservar dos veces el mismo vuelo.
-- Adultos y niños consumen asiento; infantes no.
-- Solo las reservas `PAID` cuentan para ocupación real.
-- El precio final depende de precio base, ocupación y cercanía de salida.
-- La reserva definitiva se crea en backend tras el webhook, no desde el frontend.
-
-## 🛠️ Stack técnico
-
-### Frontend
-
-- React 19
-- Vite
-- TypeScript
-- Tailwind CSS
-- Framer Motion
-- react-hook-form
-- Zod
-- i18next
-- Vitest
-- Playwright
-
-### Backend
-
-- Express 5
-- Prisma
-- PostgreSQL
-- bcrypt
-- JWT
-- Stripe
-- Vitest
-
-### Tooling
-
-- ESLint
-- GitHub Actions
-- Release Please
-
-## 📦 Puesta en marcha local
+## ⚙️ Puesta En Marcha Local
 
 ### 1. Instalar dependencias
 
@@ -129,7 +98,7 @@ cd server && npm install
 
 ### 2. Variables de entorno
 
-#### Backend (`server/.env`)
+#### Backend: `server/.env`
 
 - `DATABASE_URL`
 - `JWT_SECRET`
@@ -137,17 +106,20 @@ cd server && npm install
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET`
 
-#### Frontend (`client/.env.local`)
+#### Frontend: `client/.env.local`
 
+- `VITE_API_URL`
 - `VITE_STRIPE_PUBLISHABLE_KEY`
 
-### 3. Poblar la base de datos
+### 3. Base de datos y seed
 
 ```bash
-cd server && npx prisma db seed
+cd server && npm run db:seed
 ```
 
-### 4. Levantar el proyecto
+> Nota: el seed actual elimina e inserta datos de nuevo. Úsalo con cuidado fuera de desarrollo.
+
+### 4. Ejecutar el proyecto
 
 En dos terminales distintas:
 
@@ -161,123 +133,54 @@ cd client && npm run dev
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:5000`
 
-## 🧪 Testing
+## 🧪 Comandos Útiles
 
-El proyecto ya cuenta con una base de testing automatizado funcional:
-
-- **Unit tests frontend** con `Vitest`
-- **Unit tests backend** con `Vitest`
-- **E2E frontend** con `Playwright`
-
-### Flujos E2E cubiertos
-
-- Render de vuelos en Home
-- Login
-- Reserva autenticada
-- Carga de `My Bookings`
-
-### Comandos útiles
-
-#### Frontend
+### Frontend
 
 ```bash
+cd client && npm run dev
 cd client && npm run lint
 cd client && npm run build
 cd client && npm run test:unit
 cd client && npm run test:e2e
-cd client && npm run test
 ```
 
-#### Backend
+### Backend
 
 ```bash
-cd server && npm run lint
+cd server && npm run dev
 cd server && npm run build
 cd server && npm run test:unit
-cd server && npm run test
+cd server && npm run db:deploy
+cd server && npm run db:seed
 ```
 
-## ⚙️ CI/CD y releases
+## ✅ Calidad y CI
 
-### CI
+El repositorio incluye:
 
-Workflow: `.github/workflows/ci.yml`
+- lint y build en frontend y backend
+- unit tests con Vitest
+- E2E frontend con Playwright
+- CI en PRs hacia `main`
+- workflow de seguridad
+- release automation con Release Please por componente
 
-Valida en PRs a `main`:
+## 🚢 Despliegue
 
-- lint
-- build
-- unit tests
-- E2E frontend
+- `client/` en Vercel
+- `server/` en Railway
 
-### Seguridad
+La guía completa está en `docs/deploy-guide.md`.
 
-Workflow: `.github/workflows/security.yml`
-
-Lanza una revisión automatizada de seguridad sobre PRs.
-
-### Versionado automático
-
-Workflow: `.github/workflows/release-please.yml`
-
-El proyecto usa **Release Please** con separación por componente:
-
-- `client`
-- `server`
-
-Archivos clave:
-
-- `release-please-client-config.json`
-- `release-please-server-config.json`
-- `.release-please-manifest-client.json`
-- `.release-please-manifest-server.json`
-
-## 📝 Convención de commits
-
-Se recomienda usar **Conventional Commits**:
-
-- `feat:` nueva funcionalidad
-- `fix:` corrección de bug
-- `docs:` documentación
-- `test:` tests
-- `refactor:` refactor interno
-- `ci:` cambios en pipelines
-- `chore:` mantenimiento
-
-Ejemplos:
-
-```text
-feat: add multilingual booking flow
-fix: restore e2e compatibility
-docs: update project documentation
-ci: split release-please by component
-```
-
-## 📚 Documentación adicional
-
-En `docs/` encontrarás documentación más detallada sobre:
+## 📚 Documentación
 
 - `docs/PRD.md`
 - `docs/logica-negocio.md`
 - `docs/testing.md`
 - `docs/versionado.md`
+- `docs/deploy-guide.md`
 
-## ✅ Puntos fuertes del proyecto
+## 📌 Resumen
 
-- Arquitectura clara de frontend y backend.
-- Flujo de pago correctamente modelado con webhook.
-- UI responsive, multidioma y con identidad visual fuerte.
-- Reglas de negocio explícitas y testeables.
-- Base técnica suficientemente seria para seguir creciendo.
-
-## 🔭 Siguientes mejoras lógicas
-
-- Endurecer aún más la seguridad del backend
-- Ampliar cobertura de tests backend
-- Centralizar mejor el acceso API en frontend
-- Evolucionar la propuesta VIP hacia beneficios funcionales más claros
-- Añadir herramientas administrativas si el producto crece
-
-## 👀 Estado del repositorio
-
-Yellow Airline ya está por encima de un MVP básico. Tiene una base sólida de producto, arquitectura y automatización, pensada para seguir evolucionando sin necesidad de rehacerlo desde cero.
+Yellow Airline reúne búsqueda, reserva, pago, post-compra y despliegue real en una misma base de código, con frontend y backend claramente separados y documentación operativa para entender el proyecto rápido.

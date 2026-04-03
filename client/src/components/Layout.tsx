@@ -8,7 +8,7 @@ export const Layout = () => {
   return (
     <div className="app-shell flex min-h-screen flex-col">
       <Navbar />
-      <main className="relative z-10 mx-auto flex w-full max-w-[1440px] grow flex-col px-4 py-6 md:px-6 md:py-8 lg:px-8 lg:py-10">
+      <main className="relative z-10 mx-auto flex w-full max-w-[1440px] grow flex-col px-4 pt-28 pb-6 md:px-6 md:pt-32 md:pb-8 lg:px-8 lg:pt-32 lg:pb-10">
         <Outlet />
       </main>
       <footer className="relative z-10 px-4 pb-6 md:px-6 md:pb-8 lg:px-8 lg:pb-10">
@@ -16,7 +16,7 @@ export const Layout = () => {
           <div className="relative z-10 grid gap-6 md:grid-cols-[1.3fr_repeat(2,minmax(0,1fr))]">
             <div className="space-y-3">
               <p className="footer-label">Yellow Airline Gold</p>
-              <p className="display-title text-3xl text-[var(--text-primary)] md:text-4xl">{t('layout_footer_title')}</p>
+              <p className="display-title text-[2rem] text-[var(--text-primary)] md:text-[2.35rem]">{t('layout_footer_title')}</p>
               <p className="max-w-xl text-sm leading-7 text-[var(--text-secondary)]">{t('layout_footer_copy')}</p>
             </div>
             <div className="space-y-2 text-sm text-[var(--text-secondary)]">
