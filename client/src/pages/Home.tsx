@@ -7,7 +7,7 @@ import { PersonalizedOffersCarousel } from '../components/PersonalizedOffersCaro
 import { AnimatedRoute } from '../components/AnimatedRoute';
 import { recordSearchInsight, useSearchInsights } from '../hooks/useSearchInsights';
 import { apiUrl } from '../lib/api';
-import { translatePlaceLabel } from '../lib/places';
+import { normalizePlaceQuery, translatePlaceLabel } from '../lib/places';
 import type { Flight, OfferCard } from '../types';
 
 export const Home = () => {
@@ -27,7 +27,10 @@ export const Home = () => {
       setHasError(false);
 
       try {
-        const params = new URLSearchParams({ origin, destination });
+        const params = new URLSearchParams({
+          origin: normalizePlaceQuery(origin),
+          destination: normalizePlaceQuery(destination),
+        });
         const url = `${apiUrl('/flights')}?${params.toString()}`;
         const response = await fetch(url);
         if (!response.ok) {
@@ -131,7 +134,7 @@ export const Home = () => {
 
             <motion.div variants={heroItemMotion} className="rounded-[1.75rem] border border-white/10 bg-white/8 p-4 shadow-[0_18px_60px_rgba(5,10,20,0.16)] backdrop-blur-xl md:p-5">
               <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_220px]">
-                <label className="rounded-[1.35rem] border border-white/10 bg-black/10 p-3 transition-transform duration-200 hover:-translate-y-[1px]">
+                <label className="rounded-[1.35rem] border border-white/10 bg-black/10 p-3 transition-transform duration-200 hover:-translate-y-px">
                   <span className="eyebrow text-white/54">{t('search_origin')}</span>
                   <input
                     type="text"
@@ -142,7 +145,7 @@ export const Home = () => {
                   />
                 </label>
 
-                <label className="rounded-[1.35rem] border border-white/10 bg-black/10 p-3 transition-transform duration-200 hover:-translate-y-[1px]">
+                <label className="rounded-[1.35rem] border border-white/10 bg-black/10 p-3 transition-transform duration-200 hover:-translate-y-px">
                   <span className="eyebrow text-white/54">{t('search_dest')}</span>
                   <input
                     type="text"
@@ -172,7 +175,7 @@ export const Home = () => {
 
             <motion.div variants={heroItemMotion} className="grid gap-3 sm:grid-cols-3">
               {experienceMetrics.map((metric) => (
-                <motion.div key={metric.label} whileHover={{ y: -2 }} className="rounded-[1.5rem] border border-white/10 bg-white/8 p-4 backdrop-blur-xl">
+                <motion.div key={metric.label} whileHover={{ y: -2 }} className="rounded-3xl border border-white/10 bg-white/8 p-4 backdrop-blur-xl">
                   <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.22em] text-white/48">{metric.label}</p>
                   <p className="display-title mt-3 text-3xl text-white md:text-4xl">{metric.value}</p>
                 </motion.div>
@@ -192,11 +195,11 @@ export const Home = () => {
                 <div className="booking-chip">{t('home_snapshot_recommended_stack')}: <strong>{recommendedOffers[0] ? t(recommendedOffers[0].titleKey) : t('home_snapshot_fallback')}</strong></div>
               </div>
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-                <div className="rounded-[1.5rem] border border-white/12 bg-white/6 p-4">
+                <div className="rounded-3xl border border-white/12 bg-white/6 p-4">
                   <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">{t('home_snapshot_motion_label')}</p>
                   <p className="mt-2 text-sm text-white/76">{t('home_snapshot_motion_copy')}</p>
                 </div>
-                <div className="rounded-[1.5rem] border border-white/12 bg-white/6 p-4">
+                <div className="rounded-3xl border border-white/12 bg-white/6 p-4">
                   <p className="text-xs font-black uppercase tracking-[0.24em] text-white/48">{t('home_snapshot_responsive_label')}</p>
                   <p className="mt-2 text-sm text-white/76">{t('home_snapshot_responsive_copy')}</p>
                 </div>
@@ -228,7 +231,7 @@ export const Home = () => {
             flights.map((flight) => <FlightCard key={flight.id} flight={flight} />)
           ) : (
             <div className="surface-card col-span-full px-6 py-16 text-center">
-              <p className="text-2xl font-semibold text-[var(--text-secondary)]">{t('no_routes')}</p>
+              <p className="text-2xl font-semibold text-(--text-secondary)]">{t('no_routes')}</p>
             </div>
           )}
         </div>
@@ -239,17 +242,17 @@ export const Home = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.45 }} className="stat-tile">
             <p className="stat-kicker">{t('benefit_booking_title')}</p>
             <p className="stat-value mt-3">{t('benefit_booking_value')}</p>
-            <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{t('benefit_booking_copy')}</p>
+            <p className="mt-2 text-sm leading-7 text-(--text-secondary)]">{t('benefit_booking_copy')}</p>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.5, delay: 0.05 }} className="stat-tile">
             <p className="stat-kicker">{t('benefit_visual_title')}</p>
             <p className="stat-value mt-3">{t('benefit_visual_value')}</p>
-            <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{t('benefit_visual_copy')}</p>
+            <p className="mt-2 text-sm leading-7 text-(--text-secondary)]">{t('benefit_visual_copy')}</p>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.55, delay: 0.1 }} className="stat-tile">
             <p className="stat-kicker">{t('benefit_responsive_title')}</p>
             <p className="stat-value mt-3">{t('benefit_responsive_value')}</p>
-            <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{t('benefit_responsive_copy')}</p>
+            <p className="mt-2 text-sm leading-7 text-(--text-secondary)]">{t('benefit_responsive_copy')}</p>
           </motion.div>
         </div>
       </section>
