@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/KikolasDEV/yellow-airline/compare/server-1.3.0...server-1.4.0) (2026-04-03)
+
+
+### Features
+
+* add standalone release notes workflow ([27b6b06](https://github.com/KikolasDEV/yellow-airline/commit/27b6b06267bfaee5068c938186b965a0034191fa))
+* add standalone release notes workflow ([ade721c](https://github.com/KikolasDEV/yellow-airline/commit/ade721c841d9f62fe8aa600db8a05f5758110279))
+
 ## [1.3.0](https://github.com/KikolasDEV/yellow-airline/compare/server-1.2.0...server-1.3.0) (2026-04-02)
 
 
