@@ -28,6 +28,7 @@ jobs:
         with:
           config-file: release-please-client-config.json
           manifest-file: .release-please-manifest-client.json
+          skip-labeling: true
 
       - name: Generate AI release notes for client
         if: ${{ steps.release.outputs['client--release_created'] == 'true' && env.GEMINI_API_KEY != '' }}
@@ -91,6 +92,7 @@ jobs:
         with:
           config-file: release-please-server-config.json
           manifest-file: .release-please-manifest-server.json
+          skip-labeling: true
 
       - name: Generate AI release notes for server
         if: ${{ steps.release.outputs['server--release_created'] == 'true' && env.GEMINI_API_KEY != '' }}
