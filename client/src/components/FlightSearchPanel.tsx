@@ -472,7 +472,12 @@ export const FlightSearchPanel = ({
                   const localizedDestination = translatePlaceLabel(flight.destination, t);
                   return (
                     <article key={flight.id} className="search-result-item">
-                      <button type="button" className="cta-primary search-result-cta" onClick={() => onReserveFlight(flight)}>
+                      <button
+                        type="button"
+                        className="cta-primary search-result-cta"
+                        onClick={() => onReserveFlight(flight)}
+                        aria-label={t('search_quick_book')}
+                      >
                         {t('book_now')}
                       </button>
                       <div className="search-result-meta">
