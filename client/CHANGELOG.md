@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/KikolasDEV/yellow-airline/compare/client-1.4.0...client-1.4.1) (2026-04-03)
+
+
+### Bug Fixes
+
+* restore client release state to 1.4.0 ([b173550](https://github.com/KikolasDEV/yellow-airline/commit/b1735506a96c6e890a7e8057a2969425480c2fd9))
+
 ## [1.4.0](https://github.com/KikolasDEV/yellow-airline/compare/client-1.3.0...client-1.4.0) (2026-04-03)
 
 
