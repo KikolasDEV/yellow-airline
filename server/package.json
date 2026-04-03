@@ -43,6 +43,6 @@
     "vitest": "^4.1.2"
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "node ./node_modules/tsx/dist/cli.mjs prisma/seed.ts"
   }
 }
