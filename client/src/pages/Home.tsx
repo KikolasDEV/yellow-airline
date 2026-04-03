@@ -6,6 +6,7 @@ import { FlightSkeleton } from '../components/FlightSkeleton';
 import { PersonalizedOffersCarousel } from '../components/PersonalizedOffersCarousel';
 import { AnimatedRoute } from '../components/AnimatedRoute';
 import { recordSearchInsight, useSearchInsights } from '../hooks/useSearchInsights';
+import { apiUrl } from '../lib/api';
 import { translatePlaceLabel } from '../lib/places';
 import type { Flight, OfferCard } from '../types';
 
@@ -26,7 +27,8 @@ export const Home = () => {
       setHasError(false);
 
       try {
-        const url = `http://localhost:5000/api/flights?origin=${origin}&destination=${destination}`;
+        const params = new URLSearchParams({ origin, destination });
+        const url = `${apiUrl('/flights')}?${params.toString()}`;
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error('Flights request failed');

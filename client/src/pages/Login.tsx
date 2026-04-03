@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { apiUrl } from '../lib/api';
 
 export const Login = () => {
   const { t } = useTranslation();
@@ -14,7 +15,7 @@ export const Login = () => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/login', {
+      const response = await fetch(apiUrl('/users/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
 import { AnimatedRoute } from '../components/AnimatedRoute';
+import { apiUrl } from '../lib/api';
 import { translatePlaceLabel } from '../lib/places';
 import type { Booking } from '../types';
 
@@ -36,7 +37,7 @@ export const MyBookings = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:5000/api/bookings/my-bookings', {
+        const response = await fetch(apiUrl('/bookings/my-bookings'), {
           headers: { Authorization: `Bearer ${token}` },
         });
 

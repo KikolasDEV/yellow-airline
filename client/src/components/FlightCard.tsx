@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { AnimatedRoute } from './AnimatedRoute';
 import { BookingCustomizationSheet } from './BookingCustomizationSheet';
+import { apiUrl } from '../lib/api';
 import { translatePlaceLabel } from '../lib/places';
 import type { Flight, PassengerCount } from '../types';
 
@@ -45,7 +46,7 @@ export const FlightCard = ({ flight }: Props) => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/bookings/checkout-session', {
+      const response = await fetch(apiUrl('/bookings/checkout-session'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

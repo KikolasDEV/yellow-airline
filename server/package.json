@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "start": "node dist/src/index.js",
+    "build": "node ./node_modules/typescript/bin/tsc",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
     "lint": "eslint .",
     "test": "npm run test:unit",
     "test:unit": "vitest run"

@@ -4,6 +4,7 @@ import * as z from 'zod';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { apiUrl } from '../lib/api';
 
 const createVipSchema = (t: (key: string) => string) => z.object({
   name: z.string().min(2, t('validation_name_short')),
@@ -25,7 +26,7 @@ export const VipForm = () => {
 
   const onSubmit = async (data: VipFormData) => {
     try {
-      const response = await fetch('http://localhost:5000/api/users/register', {
+      const response = await fetch(apiUrl('/users/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
