@@ -51,36 +51,36 @@ export const VipForm = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-left">
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-[1.35rem] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface-elevated)_84%,transparent_16%)] p-4">
-          <p className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('vip_profile_note')}</p>
-          <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{t('vip_profile_note_copy')}</p>
+          <p className="micro-label">{t('vip_profile_note')}</p>
+          <p className="body-copy-muted mt-2">{t('vip_profile_note_copy')}</p>
         </div>
         <div className="rounded-[1.35rem] border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface-elevated)_84%,transparent_16%)] p-4">
-          <p className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('vip_secure_note')}</p>
-          <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{t('vip_secure_note_copy')}</p>
+          <p className="micro-label">{t('vip_secure_note')}</p>
+          <p className="body-copy-muted mt-2">{t('vip_secure_note_copy')}</p>
         </div>
       </div>
 
       <label className="block space-y-2">
-        <span className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('full_name')}</span>
+        <span className="micro-label">{t('full_name')}</span>
         <input {...register('name')} className="input-shell" />
         {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
       </label>
 
       <label className="block space-y-2">
-        <span className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('corporate_email')}</span>
+        <span className="micro-label">{t('corporate_email')}</span>
         <input {...register('email')} className="input-shell" />
         {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
       </label>
 
       <div className="grid gap-4 md:grid-cols-2">
         <label className="block space-y-2">
-          <span className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('passport')}</span>
+          <span className="micro-label">{t('passport')}</span>
           <input {...register('passport')} className="input-shell" />
           {errors.passport && <p className="text-xs text-red-500">{errors.passport.message}</p>}
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-black uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('password')}</span>
+          <span className="micro-label">{t('password')}</span>
           <input type="password" {...register('password')} className="input-shell" />
           {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
         </label>
