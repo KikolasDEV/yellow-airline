@@ -1,0 +1,112 @@
+name: Release Notes
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to rewrite notes for (for example client-1.4.1)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  rewrite-release-notes:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_MODEL: gemini-2.5-flash
+      EVENT_TAG: ${{ github.event.release.tag_name }}
+      INPUT_TAG: ${{ inputs.tag }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rewrite release notes with Gemini
+        shell: bash
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "GEMINI_API_KEY is not configured. Leaving release notes unchanged."
+            exit 0
+          fi
+
+          TAG="$EVENT_TAG"
+          if [ -z "$TAG" ]; then
+            TAG="$INPUT_TAG"
+          fi
+
+          if [ -z "$TAG" ]; then
+            echo "No release tag was provided."
+            exit 1
+          fi
+
+          case "$TAG" in
+            client-*)
+              COMPONENT="client"
+              CHANGELOG_PATH="client/CHANGELOG.md"
+              ;;
+            server-*)
+              COMPONENT="server"
+              CHANGELOG_PATH="server/CHANGELOG.md"
+              ;;
+            *)
+              echo "Unsupported tag format: $TAG"
+              exit 1
+              ;;
+          esac
+
+          VERSION="${TAG#${COMPONENT}-}"
+          git fetch --tags --force
+
+          CHANGELOG_CONTENT=$(git show "$TAG:$CHANGELOG_PATH" 2>/dev/null || true)
+          SOURCE_NOTES=""
+
+          if [ -n "$CHANGELOG_CONTENT" ]; then
+            SOURCE_NOTES=$(printf '%s\n' "$CHANGELOG_CONTENT" | awk -v version="$VERSION" '
+              BEGIN { capture = 0 }
+              $0 ~ "^## \\[" version "\\]" { capture = 1 }
+              capture && $0 ~ "^## \\[" && $0 !~ "^## \\[" version "\\]" { exit }
+              capture { print }
+            ')
+          fi
+
+          if [ -z "$SOURCE_NOTES" ]; then
+            SOURCE_NOTES=$(gh release view "$TAG" --json body --jq .body)
+          fi
+
+          if [ -z "$SOURCE_NOTES" ]; then
+            echo "No source notes found for $TAG. Leaving release notes unchanged."
+            exit 0
+          fi
+
+          RESPONSE=$(curl -sS "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent?key=$GEMINI_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg component "$COMPONENT" --arg tag "$TAG" --arg version "$VERSION" --arg source "$SOURCE_NOTES" '{
+              contents: [
+                {
+                  role: "user",
+                  parts: [
+                    {
+                      text: ("Eres un redactor tecnico experto. Reescribe las notas del release en castellano para el componente " + $component + ".\n\nVersion: " + $version + "\nTag: " + $tag + "\n\nUsa como base exclusivamente la informacion que te proporciono a continuacion. No inventes cambios. Estructura la respuesta con estas secciones cuando apliquen: Resumen, Nuevas funcionalidades, Correcciones, Otros cambios. El tono debe ser profesional, claro y breve.\n\nContenido base:\n\n" + $source)
+                    }
+                  ]
+                }
+              ]
+            }')")
+
+          NOTES=$(echo "$RESPONSE" | jq -r 'if (.candidates // empty) and ((.candidates | length) > 0) then (.candidates[0].content.parts // [] | map(.text // "") | join("\n")) else empty end')
+
+          if [ -z "$NOTES" ]; then
+            echo "Gemini did not return release notes for $TAG. Leaving current notes unchanged."
+            echo "$RESPONSE"
+            exit 0
+          fi
+
+          gh release edit "$TAG" --notes "$NOTES"

@@ -13,9 +13,6 @@ permissions:
 jobs:
   release-please-client:
     runs-on: ubuntu-latest
-    env:
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      GEMINI_MODEL: gemini-2.5-flash
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -30,56 +27,8 @@ jobs:
           manifest-file: .release-please-manifest-client.json
           skip-labeling: true
 
-      - name: Generate AI release notes for client
-        if: ${{ steps.release.outputs['client--release_created'] == 'true' && env.GEMINI_API_KEY != '' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.release.outputs['client--tag_name'] }}
-        run: |
-          git fetch --tags --force
-
-          PREV_TAG=$(git tag --list 'client-*' --sort=-creatordate | grep -vx "$TAG" | head -n 1 || true)
-
-          if [ -n "$PREV_TAG" ]; then
-            COMMITS=$(git log --pretty=format:'- %s (%h)' "$PREV_TAG..$TAG")
-          else
-            COMMITS=$(git log --pretty=format:'- %s (%h)' "$TAG")
-          fi
-
-          if [ -z "$COMMITS" ]; then
-            COMMITS='- Sin cambios detectados en el rango de tags.'
-          fi
-
-          RESPONSE=$(curl -sS "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent?key=$GEMINI_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d "$(jq -n --arg tag "$TAG" --arg commits "$COMMITS" '{
-              contents: [
-                {
-                  role: "user",
-                  parts: [
-                    {
-                      text: ("Eres un redactor tecnico experto. A partir de la lista de cambios que te proporciono, genera notas de release en castellano, bien estructuradas y profesionales. Incluye: un resumen breve de 1-2 lineas al inicio, y secciones para Nuevas funcionalidades, Correcciones de bugs, y Otros cambios. Usa un tono cercano pero profesional.\n\nGenera las notas de release para la version " + $tag + " basandote en los siguientes cambios:\n\n" + $commits)
-                    }
-                  ]
-                }
-              ]
-            }')")
-
-          NOTES=$(echo "$RESPONSE" | jq -r 'if (.candidates // empty) and ((.candidates | length) > 0) then (.candidates[0].content.parts // [] | map(.text // "") | join("\n")) else empty end')
-
-          if [ -z "$NOTES" ]; then
-            echo "No se pudieron generar notas para $TAG con Gemini. Se mantienen notas por defecto."
-            echo "$RESPONSE"
-            exit 0
-          fi
-
-          gh release edit "$TAG" --notes "$NOTES"
-
   release-please-server:
     runs-on: ubuntu-latest
-    env:
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      GEMINI_MODEL: gemini-2.5-flash
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -93,48 +42,3 @@ jobs:
           config-file: release-please-server-config.json
           manifest-file: .release-please-manifest-server.json
           skip-labeling: true
-
-      - name: Generate AI release notes for server
-        if: ${{ steps.release.outputs['server--release_created'] == 'true' && env.GEMINI_API_KEY != '' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.release.outputs['server--tag_name'] }}
-        run: |
-          git fetch --tags --force
-
-          PREV_TAG=$(git tag --list 'server-*' --sort=-creatordate | grep -vx "$TAG" | head -n 1 || true)
-
-          if [ -n "$PREV_TAG" ]; then
-            COMMITS=$(git log --pretty=format:'- %s (%h)' "$PREV_TAG..$TAG")
-          else
-            COMMITS=$(git log --pretty=format:'- %s (%h)' "$TAG")
-          fi
-
-          if [ -z "$COMMITS" ]; then
-            COMMITS='- Sin cambios detectados en el rango de tags.'
-          fi
-
-          RESPONSE=$(curl -sS "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent?key=$GEMINI_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d "$(jq -n --arg tag "$TAG" --arg commits "$COMMITS" '{
-              contents: [
-                {
-                  role: "user",
-                  parts: [
-                    {
-                      text: ("Eres un redactor tecnico experto. A partir de la lista de cambios que te proporciono, genera notas de release en castellano, bien estructuradas y profesionales. Incluye: un resumen breve de 1-2 lineas al inicio, y secciones para Nuevas funcionalidades, Correcciones de bugs, y Otros cambios. Usa un tono cercano pero profesional.\n\nGenera las notas de release para la version " + $tag + " basandote en los siguientes cambios:\n\n" + $commits)
-                    }
-                  ]
-                }
-              ]
-            }')")
-
-          NOTES=$(echo "$RESPONSE" | jq -r 'if (.candidates // empty) and ((.candidates | length) > 0) then (.candidates[0].content.parts // [] | map(.text // "") | join("\n")) else empty end')
-
-          if [ -z "$NOTES" ]; then
-            echo "No se pudieron generar notas para $TAG con Gemini. Se mantienen notas por defecto."
-            echo "$RESPONSE"
-            exit 0
-          fi
-
-          gh release edit "$TAG" --notes "$NOTES"

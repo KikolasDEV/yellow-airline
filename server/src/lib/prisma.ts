@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
+// PROBANDO WORKFLOW RELEASE-NOTES
 // Usamos una constante global para evitar múltiples conexiones en desarrollo
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
