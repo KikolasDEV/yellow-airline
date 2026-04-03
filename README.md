@@ -1,6 +1,6 @@
 # Yellow Airline
 
-<p align="center">
+<p>
   <strong>Aplicación full stack de reservas de vuelos con búsqueda interactiva, autenticación, pagos con Stripe y despliegue real en producción.</strong>
 </p>
 
