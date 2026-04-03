@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0](https://github.com/KikolasDEV/yellow-airline/compare/client-1.3.0...client-1.4.0) (2026-04-03)
+
+
+### Features
+
+* refresh booking experience and project documentation ([5e8b560](https://github.com/KikolasDEV/yellow-airline/commit/5e8b560017472d5de689f43f4fb538d63dd1ac9c))
+* refresh booking experience and project documentation ([afb93ce](https://github.com/KikolasDEV/yellow-airline/commit/afb93ce075cc817a3ebcad0d5ea69c899413c443))
+
+
+### Bug Fixes
+
+* restore e2e compatibility after ui refresh ([3f1728e](https://github.com/KikolasDEV/yellow-airline/commit/3f1728e412dfdfc5f84a2647527fa79f3b47123c))
+
 ## [1.3.0](https://github.com/KikolasDEV/yellow-airline/compare/client-1.2.0...client-1.3.0) (2026-04-02)
 
 
