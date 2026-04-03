@@ -59,6 +59,12 @@
 ![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)
 ![Release Please](https://img.shields.io/badge/Release_Please-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)
 
+## 🤖 Desarrollo Asistido por IA
+
+Gran parte del desarrollo de Yellow Airline se ha realizado con asistencia de IA usando `OpenCode`, aprovechando flujos de trabajo con agentes, skills y herramientas conectadas para acelerar tareas de implementación, revisión, documentación y automatización.
+
+La IA se ha utilizado como apoyo de ingeniería, no como sustituto del criterio técnico. La arquitectura, las decisiones de integración, la validación de cambios, el despliegue y la resolución de incidencias se han revisado y ajustado manualmente durante el proceso.
+
 ## 🏗️ Arquitectura
 
 ```text
