@@ -64,6 +64,10 @@ Valores recomendados:
 6. Validar login, vuelos, reservas y checkout
 7. Crear webhook de Stripe apuntando al entorno de staging
 
+Checklist operativo exacto:
+
+- `docs/vercel-staging-checklist.md`
+
 ## Migraciones y seed
 
 Vercel no ofrece un `start command` persistente como Railway, así que no conviene meter migraciones automáticas destructivas en cada build.

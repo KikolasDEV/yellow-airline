@@ -79,3 +79,11 @@ Mientras `web/` no cubra auth, bookings y Stripe de punta a punta:
 La guia operativa para crear el entorno de staging de `web/` en Vercel esta en:
 
 - `docs/vercel-staging-web.md`
+- `docs/vercel-staging-checklist.md`
+
+Comando util para validar variables reales de staging antes del deploy o antes de aplicar migraciones:
+
+```bash
+cd web
+npm run check:staging-env
+```

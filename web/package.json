@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "postinstall": "prisma generate",
+    "check:staging-env": "node ./scripts/check-staging-env.mjs",
     "db:generate": "prisma generate",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
