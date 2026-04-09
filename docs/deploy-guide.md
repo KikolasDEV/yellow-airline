@@ -7,6 +7,12 @@ Este proyecto se despliega en dos plataformas:
 - `client/` en Vercel
 - `server/` en Railway
 
+Nota de transicion:
+
+- la nueva app unificada vive en `web/`
+- su guia de staging en Vercel esta en `docs/vercel-staging-web.md`
+- esta guia sigue describiendo el despliegue legacy actual
+
 URLs de producción actuales:
 
 - Frontend: `https://yellow-airline.vercel.app`

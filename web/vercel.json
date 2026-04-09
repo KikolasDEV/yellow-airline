@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "functions": {
+    "src/app/api/payments/checkout-session/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/payments/webhook/route.ts": {
+      "maxDuration": 60
+    }
+  }
+}

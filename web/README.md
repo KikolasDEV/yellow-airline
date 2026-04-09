@@ -73,3 +73,9 @@ Mientras `web/` no cubra auth, bookings y Stripe de punta a punta:
 - no cambiar el webhook productivo de Stripe
 - no eliminar `client/` ni `server/`
 - no apuntar produccion a la nueva app como unica fuente de verdad
+
+## Vercel staging
+
+La guia operativa para crear el entorno de staging de `web/` en Vercel esta en:
+
+- `docs/vercel-staging-web.md`
