@@ -1,3 +1,5 @@
+import { FlightInventory } from '@/components/flights/FlightInventory';
+
 export default function Home() {
   return (
     <div className="space-y-8 pb-6 md:space-y-10 lg:space-y-12">
@@ -62,6 +64,20 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="space-y-4">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="eyebrow">Inventario</p>
+            <h2 className="section-title">Vuelos disponibles desde la nueva API</h2>
+          </div>
+          <p className="section-copy max-w-xl">
+            Este bloque ya consulta `web/src/app/api/flights/route.ts` y muestra datos reales servidos desde Next.
+          </p>
+        </div>
+
+        <FlightInventory />
       </section>
     </div>
   );

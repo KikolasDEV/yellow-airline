@@ -5,7 +5,7 @@ import { getSessionUser } from '@/middleware/auth';
 import { parseJsonBody } from '@/utils/http';
 import { jsonError, jsonOk } from '@/utils/responses';
 import { loginSchema, registerSchema } from './auth.schemas';
-import { loginUser, registerUser } from './auth.service';
+import { getSessionUserDetails, loginUser, registerUser } from './auth.service';
 
 const sessionCookieOptions = {
   httpOnly: true,
@@ -75,5 +75,15 @@ export const logoutController = async () => {
 
 export const sessionController = async () => {
   const user = await getSessionUser();
-  return jsonOk({ user });
+
+  if (!user) {
+    return jsonOk({ user: null });
+  }
+
+  try {
+    const sessionUser = await getSessionUserDetails(user.userId);
+    return jsonOk({ user: sessionUser ?? user });
+  } catch {
+    return jsonOk({ user });
+  }
 };

@@ -58,3 +58,17 @@ export const registerUser = async ({ name, email, passport, password }: Register
     isVip: user.isVip,
   };
 };
+
+export const getSessionUserDetails = async (userId: number) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      isVip: true,
+    },
+  });
+
+  return user;
+};
