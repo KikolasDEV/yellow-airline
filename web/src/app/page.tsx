@@ -1,41 +1,68 @@
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center px-6 py-20">
-      <section className="rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,#101828_0%,#18253a_55%,#22324d_100%)] p-8 text-white shadow-[0_30px_80px_rgba(8,15,30,0.35)] md:p-12">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-amber-300/80">Yellow Airline Transition</p>
-        <h1 className="mt-6 text-4xl font-semibold tracking-tight md:text-6xl">
-          Nueva app Next.js en paralelo, legacy intacto.
-        </h1>
-        <p className="mt-6 max-w-3xl text-base leading-8 text-slate-200 md:text-lg">
-          Este workspace unifica frontend y backend en una sola base de codigo con App Router,
-          Prisma compartido y modulos backend. El despliegue actual en Railway se mantiene como
-          red de seguridad mientras completamos la migracion.
-        </p>
-
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          <article className="rounded-[1.5rem] border border-white/10 bg-white/6 p-5 backdrop-blur">
-            <p className="text-sm font-semibold text-amber-200">Estado</p>
-            <p className="mt-3 text-2xl font-semibold">Foundation</p>
-            <p className="mt-2 text-sm leading-7 text-slate-300">
-              `web/` ya es la nueva base tecnica para la migracion incremental.
-            </p>
-          </article>
-          <article className="rounded-[1.5rem] border border-white/10 bg-white/6 p-5 backdrop-blur">
-            <p className="text-sm font-semibold text-amber-200">Legacy</p>
-            <p className="mt-3 text-2xl font-semibold">Sin cambios</p>
-            <p className="mt-2 text-sm leading-7 text-slate-300">
-              `client/` y `server/` siguen siendo la version estable mientras migramos.
-            </p>
-          </article>
-          <article className="rounded-[1.5rem] border border-white/10 bg-white/6 p-5 backdrop-blur">
-            <p className="text-sm font-semibold text-amber-200">Safety Net</p>
-            <p className="mt-3 text-2xl font-semibold">Railway activo</p>
-            <p className="mt-2 text-sm leading-7 text-slate-300">
-              El backend actual no se sustituye hasta que la nueva app quede validada end to end.
-            </p>
-          </article>
+    <div className="space-y-8 pb-6 md:space-y-10 lg:space-y-12">
+      <section className="hero-shell p-5 md:p-7 lg:p-8">
+        <div className="relative z-10 max-w-4xl space-y-5">
+          <p className="eyebrow text-white/72">Yellow Airline Transition</p>
+          <h1 className="display-title text-[2.7rem] text-white md:text-[4.4rem]">
+            Next.js despega en paralelo mientras Railway sigue protegiendo produccion.
+          </h1>
+          <p className="max-w-3xl text-base leading-8 text-white/74 md:text-lg">
+            Esta nueva app en `web/` ya integra App Router, Prisma compartido, modulos backend,
+            cookies de sesion y rutas iniciales para reemplazar gradualmente al stack legacy.
+          </p>
+          <div className="flex flex-wrap gap-3 pt-3">
+            <a href="#offers-section" className="cta-primary">Ver progreso</a>
+            <a href="#inventory-section" className="cta-secondary">Ver API migrada</a>
+          </div>
         </div>
       </section>
-    </main>
+
+      <section className="grid gap-4 md:grid-cols-3" id="offers-section">
+        <article className="stat-tile">
+          <p className="stat-kicker">Estado</p>
+          <p className="stat-value mt-3">Foundation</p>
+          <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">
+            `web/` ya es una base valida para seguir migrando paginas, auth y reservas.
+          </p>
+        </article>
+        <article className="stat-tile">
+          <p className="stat-kicker">Legacy</p>
+          <p className="stat-value mt-3">Intacto</p>
+          <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">
+            `client/` y `server/` siguen funcionando sin cambios como referencia estable.
+          </p>
+        </article>
+        <article className="stat-tile">
+          <p className="stat-kicker">Safety Net</p>
+          <p className="stat-value mt-3">Railway</p>
+          <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">
+            No se apagará hasta que Next cubra auth, bookings y Stripe de punta a punta.
+          </p>
+        </article>
+      </section>
+
+      <section className="section-frame p-5 md:p-7" id="inventory-section">
+        <div className="relative z-10 grid gap-4 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+          <div>
+            <p className="eyebrow">API migrada</p>
+            <h2 className="section-title mt-3 text-[2rem] md:text-[3rem]">`/api/flights` ya responde desde Next.</h2>
+            <p className="section-copy mt-4 max-w-2xl">
+              La nueva app ya sirve route handlers propios en App Router. Auth inicial con cookie,
+              flights migrado y modulos preparados para bookings y payments.
+            </p>
+          </div>
+          <div className="surface-card p-6">
+            <p className="micro-label">Siguientes bloques</p>
+            <div className="mt-4 grid gap-3 text-sm text-[var(--text-secondary)]">
+              <p>1. Migrar shell visual y providers</p>
+              <p>2. Mover login y registro VIP</p>
+              <p>3. Conectar bookings y Stripe</p>
+              <p>4. Validar Vercel preview antes del cutover</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
