@@ -1,5 +1,7 @@
 import { paymentsRouteHandlers } from '@/modules/payments/payments.routes';
 
-export async function POST() {
-  return paymentsRouteHandlers.WEBHOOK();
+export const runtime = 'nodejs';
+
+export async function POST(request: Request) {
+  return paymentsRouteHandlers.WEBHOOK(request);
 }

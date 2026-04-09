@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface FlightCardData {
   id: number;
@@ -13,9 +15,51 @@ interface FlightCardData {
 }
 
 export const FlightInventory = () => {
+  const router = useRouter();
   const [flights, setFlights] = useState<FlightCardData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [pendingFlightId, setPendingFlightId] = useState<number | null>(null);
+
+  const handleQuickBooking = async (flightId: number) => {
+    setPendingFlightId(flightId);
+
+    try {
+      const response = await fetch('/api/payments/checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          flightId,
+          adults: 1,
+          children: 0,
+          infants: 0,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 401) {
+        toast.error('Inicia sesion en la nueva app para reservar.');
+        router.push('/login');
+        return;
+      }
+
+      if (!response.ok) {
+        toast.error(data.error ?? 'No se pudo iniciar la reserva.');
+        return;
+      }
+
+      if (data.checkoutUrl) {
+        window.location.assign(data.checkoutUrl);
+      }
+    } catch {
+      toast.error('Error de conexion iniciando el checkout.');
+    } finally {
+      setPendingFlightId(null);
+    }
+  };
 
   useEffect(() => {
     const loadFlights = async () => {
@@ -86,6 +130,14 @@ export const FlightInventory = () => {
             <p>Ahora: {flight.finalPrice.toFixed(2)} EUR</p>
             <p>Plazas disponibles: {flight.availableSeats}</p>
           </div>
+          <button
+            type="button"
+            className="cta-primary mt-6 w-full justify-center"
+            onClick={() => handleQuickBooking(flight.id)}
+            disabled={pendingFlightId === flight.id}
+          >
+            {pendingFlightId === flight.id ? 'Conectando...' : 'Reserva rapida'}
+          </button>
         </article>
       ))}
     </div>
