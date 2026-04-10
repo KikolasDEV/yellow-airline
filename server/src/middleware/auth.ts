@@ -15,8 +15,8 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
   try {
     // 2. Verificar el sello (Token)
     const verified = jwt.verify(token, JWT_SECRET);
-    (req as any).user = verified; // Guardamos los datos del usuario en la petición
-    next(); // ¡Todo bien! Pasa al siguiente paso (la ruta)
+    (req as any).user = verified; 
+    next(); 
   } catch (error) {
     res.status(403).json({ error: "Token no válido o expirado" });
   }

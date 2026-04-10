@@ -6,8 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('✈️ Iniciando el seeding de Yellow Airline...');
 
-  // 1. Limpiamos datos para evitar conflictos de IDs o Unique constraints
-  // Es importante borrar primero Bookings si existen por la integridad referencial
+  // 1. Limpiamos datos para evitar conflictos de IDs o Unique constraints (primero Bookings por la integridad referencial)
   await prisma.booking.deleteMany();
   await prisma.flight.deleteMany();
   await prisma.user.deleteMany();
