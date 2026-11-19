@@ -1,5 +1,8 @@
 # Lógica de Negocio
 
+> Contrato histórico con notas de la aplicación unificada. Para el cambio operativo,
+> ver [migration-to-vercel.md](migration-to-vercel.md).
+
 ## Objetivo
 
 Describir las reglas funcionales reales del proyecto en su estado actual.
@@ -63,9 +66,16 @@ La fuente de verdad del pricing es el backend.
 
 Solo las reservas `PAID` cuentan para capacidad real.
 
+En Next.js también se descuentan compras CREATING/OPEN/REVIEW. Las retenciones no se liberan
+por tiempo local sino por expiración confirmada en Stripe. Las mutaciones se serializan mediante
+bloqueo de fila del vuelo en PostgreSQL.
+
 ### 4. Duplicidad
 
 Un usuario no puede reservar el mismo vuelo dos veces.
+
+Next.js reanuda la compra abierta de ese usuario/vuelo en lugar de crear otro cobro. Los pagos
+inconsistentes se guardan en REVIEW para conciliación del operador.
 
 ### 5. Registro y login
 

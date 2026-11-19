@@ -1,168 +1,111 @@
 # AGENTS.md
-## Scope
-This repo has two separate TypeScript apps:
-- `client/`: React 19 + Vite frontend
-- `server/`: Express 5 + Prisma backend
-There is no root workspace runner. Run commands inside `client/` or `server/`.
 
-## Repo Rules
-- No previous `AGENTS.md` was present.
-- No `.cursor/rules/` directory is present.
-- No `.cursorrules` file is present.
-- No `.github/copilot-instructions.md` file is present.
-- If those files are added later, treat them as higher-priority repo instructions and update this file.
+## Architecture and migration status
 
-## Install
-Use `npm` separately in each app:
-```bash
-cd client && npm install
-cd server && npm install
-```
-Both apps already use `package-lock.json`.
+This repository contains **three independent TypeScript applications**, not a root npm workspace:
+- `web/`: Next.js App Router, the unified Vercel deployment target.
+- `client/`: legacy React/Vite frontend; keep available until production cutover is verified.
+- `server/`: legacy Express API; Railway must not be removed before data/payment reconciliation.
 
-## Main Commands
-Frontend:
-```bash
-cd client && npm run dev
-cd client && npm run build
-cd client && npm run lint
-cd client && npm run preview
-```
-Backend:
-```bash
-cd server && npm run dev
-cd server && npm run build
-cd server && npx prisma db seed
-```
-Local URLs used by the codebase:
-- Frontend: `http://localhost:5173`
-- Backend: `http://localhost:5000`
+The current hosting configuration must be verified in the provider dashboards. A successful local
+build does not prove that production has migrated. The authoritative manual runbook is
+`docs/migration-to-vercel.md`.
 
-## Verified Commands
-These commands were run successfully while creating this file:
-- `cd client && npm run lint`
-- `cd client && npm run build`
-- `cd server && npm run build`
-The backend `test` script is only a placeholder and exits with failure.
+Read `web/AGENTS.md` and the installed Next.js documentation before changing Next.js APIs.
+Do not spawn agents unless explicitly authorized by the user or other applicable instructions.
 
-## Test Status
-There is no real automated test runner configured right now.
-- Frontend: no `test` script, no Vitest/Jest config, no test files found
-- Backend: `npm test` prints `Error: no test specified` and exits non-zero
-Because of that, there is currently no supported single-test command.
+## Commands
 
-## Single-Test Guidance
-If asked to run a single test:
-- say clearly that no test harness exists
-- do not invent Vitest/Jest commands
-- do not claim `npm test -- foo` is supported
-- use build/lint as the available validation instead
-Practical replacement checks:
-```bash
-cd client && npm run lint
-cd client && npm run build
-cd server && npm run build
+Use Node.js 22 and npm separately inside each application. Each directory has its own lockfile.
+The checked-in `.npmrc` files use `legacy-peer-deps=true` for reproducible installs; npm 11's peer
+resolver failed on this dependency tree. Do not remove this setting without regenerating and
+verifying the lockfiles with `npm ci`. No global npm upgrade is necessary.
+
+### web/
+```text
+npm ci
+npm run dev
+npm run lint
+npm run build
+npm run start
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+npm run check:env
+npm run check:staging-env
+npm run db:generate
+npm run db:migrate:deploy
+npm run db:verify
+npm run payments:reconcile
 ```
 
-## Stack
-- Frontend: React, React Router, React Hook Form, Zod, i18next, Tailwind, Vite
-- Backend: Express, Prisma, PostgreSQL, bcrypt, JWT
-- Module system: ESM in both apps
-- Language: TypeScript everywhere
+Integration tests require an explicit `TEST_DATABASE_URL` to a loopback PostgreSQL database whose
+name ends in `_test`. They never infer the target from `DATABASE_URL`. They create and remove only
+their own fixtures. See `docs/testing.md`.
+E2E tests start a production Next.js server on port 3100 after a build. They mock API responses;
+they are not evidence of a real Stripe settlement.
 
-## Important Paths
-Frontend:
-- `client/src/components/`
-- `client/src/pages/`
-- `client/src/services/`
-- `client/src/types/`
-Backend:
-- `server/src/routes/`
-- `server/src/middleware/`
-- `server/src/lib/`
-- `server/prisma/`
+### client/
+`npm run dev`, `npm run lint`, `npm run build`, `npm run test:unit`, `npm run test:e2e`.
 
-## Style Guidelines
-Match the surrounding file. Prefer the smallest correct change.
+### server/
+`npm run dev`, `npm run lint`, `npm run build`, `npm run test:unit`.
+`server/dist/` contains tracked generated artifacts. For a review-only build use
+`npm run build -- --outDir <dedicated-temporary-directory>` rather than accidentally changing
+tracked output. Production still runs a fresh build through its deployment commands.
 
-### Formatting
-- Use TypeScript for application code.
-- Preserve the file's existing semicolon style.
-- Prefer single quotes in TS/TSX unless the file already uses something else.
-- Keep JSX and object literals readable.
-- Use ESM imports/exports only.
+There ARE working Vitest and Playwright tests. Earlier instructions claiming otherwise were stale.
+Single tests can be selected with `npm run test:unit -- <file>` or
+`npm run test:e2e -- <file>` inside the appropriate app. Web integration tests use their separate config.
 
-### Imports
-- Put external imports before local imports.
-- Use `import type` for type-only imports when practical.
-- Prefer relative imports; do not introduce path aliases without a repo-wide reason.
-- Backend local imports should keep the `.js` extension.
-- Frontend local import style should follow the file you are editing.
+## Non-negotiable safety rules
 
-### Types
-- Prefer explicit interfaces and type aliases for shared shapes.
-- Reuse types from `client/src/types/` when possible.
-- Keep component props, state, and async results typed.
-- Avoid new `any` usage, especially on the backend.
-- Existing backend `(req as any)` usage is technical debt; do not spread it unless necessary.
-- Respect strict TypeScript settings in both apps.
+- Never read, print, commit or hardcode real secrets or `.env` contents.
+- Never run remote migrations, seed, restore, reset or provider changes without explicit target approval.
+- `web/` owns new migrations. Preserve historical migrations and their checksums.
+- New schema changes must remain additive while legacy rollback is required.
+- Do not run migrations or seeds in Vercel install/build hooks.
+- `db:migrate:deploy` requires `MIGRATION_APPROVED=true`. Production also requires
+  `MIGRATION_BACKUP_CONFIRMED=true`; these are acknowledgements, not proof a backup exists.
+- Demo seeds are non-destructive and blocked unless explicitly enabled in a non-production environment.
+- Staging and Preview must never use production data, credentials or Stripe resources.
+- `APP_ENV` identifies the business environment, independently of Vercel's Production/Preview scope.
+- `APP_URL` is a trusted canonical origin. Never construct payment redirects from arbitrary Host headers.
+- Enable `WRITES_ENABLED`, `PAYMENTS_ENABLED`, `SETTLEMENTS_ENABLED` deliberately.
+  Purchase maintenance should normally leave settlements enabled. A final database snapshot requires
+  all writers, including webhooks and reconciliation jobs, to be paused.
+- Do not allow legacy and Next.js checkout creation simultaneously against the production database.
+- Legacy webhook must ignore tagged Next.js events. Next.js ignores untagged legacy events.
+  All legacy checkouts must be drained and reconciled before the production cutover.
+- Rollback must preserve post-cutover purchases. A previous deployment does not restore a database,
+  environment variables, webhook routing or provider settings.
 
-### Naming
-- Components, pages, exported UI pieces: PascalCase
-- Functions, variables, hooks: camelCase
-- Constants: `UPPER_SNAKE_CASE` for true constants only
-- Keep route file names descriptive, matching current `*Routes.ts` usage
-- Use domain names already present: `flight`, `booking`, `user`, `vip`, `departureTime`
+## Booking invariants
 
-### React Patterns
-- Use functional components.
-- Keep page-specific fetching near the page unless reuse is clear.
-- Use `react-hook-form` + Zod for new complex forms.
-- Avoid unnecessary abstractions for small UI pieces.
-- Preserve the current Tailwind-heavy styling approach.
+- All capacity and seat mutations in Next.js acquire a PostgreSQL row lock on the Flight.
+- Checkout orders persist immutable prices (integer cents), party counts, seats and environment.
+- Stripe creation uses the order ID as its idempotency key.
+- Never release capacity using a local timestamp alone. Require confirmed Stripe expiration.
+- Unknown sessions and inconsistent paid orders fail closed and require operator reconciliation.
+- Paid session amount, currency, mode, environment and identity must match the stored order.
+- `Booking.finalPrice` is the historical **unit** price. `totalAmount` is the new total in cents;
+  legacy totals are derived from unit price times adults + children.
+- Infants have no seat; require an adult; at most nine travellers per purchase.
+- Only the authenticated owner can inspect a purchase. A success URL is not proof of payment.
 
-### Server Patterns
-- Define HTTP endpoints in `server/src/routes/`.
-- Use the shared Prisma client from `server/src/lib/prisma.ts`.
-- Return JSON from API endpoints, including errors.
-- Keep route handlers straightforward and readable.
-- Normalize request data before database writes when needed.
+## Code conventions
 
-### Error Handling
-- Wrap async network and database work in `try/catch`.
-- Return appropriate HTTP status codes.
-- Keep user-facing messages concise.
-- Log unexpected failures only when the log is useful for debugging.
-- Do not swallow errors silently.
+Preserve local TypeScript style, explicit types, ESM, and readable code. Avoid new `any`.
+Backend imports use `.js`; Next.js uses its existing `@/` alias. Keep server-only modules out of client
+components. Use validated runtime inputs, bounded bodies, JSON errors and meaningful status codes.
+Never silently swallow unexpected database/payment failures; log identifiers, not personal information.
+Maintain Spanish and English product copy, keyboard accessibility, and reduced-motion support.
 
-### Data and Validation
-- Frontend form validation should follow the existing Zod pattern.
-- Convert request input to the expected runtime type before persistence.
-- Keep Prisma schema, migrations, seeds, and route logic aligned.
+## Validation
 
-### Environment and Secrets
-- Backend expects values like `DATABASE_URL`, `JWT_SECRET`, and optionally `PORT`.
-- Never commit secrets or `.env` contents.
-- Do not replace environment-based config with hardcoded secrets.
-
-## Tooling Notes
-Frontend linting is configured in `client/eslint.config.js` with:
-- ESLint recommended rules
-- `typescript-eslint` recommended rules
-- React Hooks rules
-- React Refresh Vite rules
-Frontend TypeScript is stricter than the backend config and includes `noUnusedLocals` and `noUnusedParameters`.
-
-## Agent Workflow
-- Decide first whether the change belongs in `client/`, `server/`, or both.
-- Run the narrowest useful validation for the files you changed.
-- For frontend-only changes, usually run `npm run lint` and `npm run build` in `client/`.
-- For backend-only changes, usually run `npm run build` in `server/`.
-- For API contract changes, validate both apps.
-- If asked for tests, explicitly state that no working test harness exists yet.
-
-## Do Not Assume
-- Do not assume root `npm run build`, `npm run lint`, or `npm test` commands exist.
-- Do not assume a single-test command exists.
-- Do not assume path aliases or a monorepo orchestrator exist.
-- Do not assume English-only product copy; the app currently mixes Spanish and English.
+- Web changes: lint, build, unit tests; integration tests for database/payment changes.
+- Frontend flows: Playwright after build; real Stripe sandbox validation is additionally manual.
+- Legacy changes: lint/build/unit tests in the affected app, plus legacy E2E where applicable.
+- Run `npm audit --omit=dev` for runtime dependencies. There is a documented build-time Prisma 6
+  advisory in `docs/migration-to-vercel.md`; do not apply a blind major upgrade or unsafe override.
+- Do not claim remote deployment, webhook delivery, backups or migration success without evidence.

@@ -1,89 +1,36 @@
-# Yellow Airline Web
+# Yellow Airline · Next.js
 
-Nueva app unificada en Next.js para migrar gradualmente el proyecto desde `client/` + `server/` hacia una sola aplicacion desplegable en Vercel.
+Aplicación unificada para Vercel: interfaz, autenticación con cookie HttpOnly, vuelos, reservas,
+asientos persistidos, Stripe Checkout/webhook, estados de compra verificados y PDF con QR.
 
-## Estado
+**No ejecutar migraciones ni reemplazar producción sin seguir
+[el runbook](../docs/migration-to-vercel.md).**
 
-- `web/` es la nueva base tecnica
-- `client/` y `server/` siguen siendo el sistema legacy estable
-- Railway se mantiene activo como red de seguridad durante la transicion
-- la nueva app debe usar una base PostgreSQL de staging separada
+## Local
 
-## Variables de entorno
+Node 22. Copiar `.env.example` a `.env.local` y usar PostgreSQL y Stripe test independientes.
+Configurar explícitamente APP_ENV, APP_URL y ambas conexiones de base de datos.
 
-Copia `web/.env.example` a `web/.env.local` y rellena los valores.
-
-Variables requeridas:
-
-- `DATABASE_URL`
-- `JWT_SECRET`
-- `NEXT_PUBLIC_APP_URL`
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-
-Importante:
-
-- no reutilizar la base productiva actual del backend legacy mientras seguimos migrando
-- usar claves de Stripe de pruebas para staging
-- usar un `JWT_SECRET` distinto al del sistema legacy
-
-## Desarrollo local
-
-```bash
-cd web
-npm install
-npm run db:generate
+```powershell
+npm ci
+npm run check:env
+$env:MIGRATION_APPROVED = 'true'
+npm run db:migrate:deploy
 npm run dev
 ```
 
-App local:
+Flags desactivados por defecto. Tras configurar el webhook test, habilitar conscientemente
+WRITES_ENABLED, PAYMENTS_ENABLED y SETTLEMENTS_ENABLED. `.env.local` también se carga en scripts Prisma.
+No hay migraciones ni seeds en el build.
 
-- `http://localhost:3000`
+## Calidad
 
-## Base de datos de staging
+`npm run lint`, `npm run test:unit`, `npm run build`, `npm run test:e2e`.
+Integración local PostgreSQL: `npm run test:integration` con TEST_DATABASE_URL explícita.
+Ver [testing](../docs/testing.md).
 
-Flujo recomendado:
+## Despliegue
 
-```bash
-cd web
-npm run db:migrate:dev
-npm run db:seed
-```
-
-Para aplicar migraciones en un entorno desplegado:
-
-```bash
-cd web
-npm run db:migrate:deploy
-```
-
-## Validacion minima
-
-```bash
-cd web
-npm run lint
-npm run build
-```
-
-## Transicion segura
-
-Mientras `web/` no cubra auth, bookings y Stripe de punta a punta:
-
-- no apagar Railway
-- no cambiar el webhook productivo de Stripe
-- no eliminar `client/` ni `server/`
-- no apuntar produccion a la nueva app como unica fuente de verdad
-
-## Vercel staging
-
-La guia operativa para crear el entorno de staging de `web/` en Vercel esta en:
-
-- `docs/vercel-staging-web.md`
-- `docs/vercel-staging-checklist.md`
-
-Comando util para validar variables reales de staging antes del deploy o antes de aplicar migraciones:
-
-```bash
-cd web
-npm run check:staging-env
-```
+Root `web`, Next.js, Node 22, install `npm ci`, build `npm run build`, sin output override.
+Base PostgreSQL mediante Vercel Marketplace. Cron diario de conciliación protegido por CRON_SECRET.
+Staging y producción separados; Railway se retira solo después del cambio y conciliación.

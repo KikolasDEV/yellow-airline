@@ -1,5 +1,8 @@
 # Deploy Guide
 
+> Esta página describe el sistema **legacy**. Para el nuevo despliegue y el cambio productivo,
+> seguir [migration-to-vercel.md](migration-to-vercel.md).
+
 ## Resumen
 
 Este proyecto se despliega en dos plataformas:
@@ -45,21 +48,19 @@ URLs de producción actuales:
 - `Region`: una región europea cercana
 - `Replicas`: `1`
 
-### Seed inicial
+### Seeds y mantenimiento
 
-Si la base de datos arranca vacía:
+No ejecutar seeds durante el arranque. Los seeds nuevos son no destructivos y requieren
+entorno no productivo explícito y ALLOW_DEMO_SEED=true. Para producción se restauran datos,
+no se generan fixtures.
 
-1. Cambiar temporalmente el `Start Command` a:
+Controles nuevos del legacy:
+- `LEGACY_WRITES_ENABLED=false` bloquea registro, checkout y CRUD durante el cambio.
+- `LEGACY_WEBHOOK_ENABLED=false` pausa confirmaciones legacy con 503 para conservar reintentos Stripe.
+- `FLIGHT_ADMIN_TOKEN` (mínimo 32 caracteres) es obligatorio para CRUD de vuelos.
+- El webhook legacy ignora compras etiquetadas de Next.js.
 
-```bash
-npm run db:deploy && npm run db:seed && npm run start
-```
-
-2. Redeploy.
-3. Verificar que `/api/flights` devuelve datos.
-4. Restaurar el `Start Command` original.
-
-Nota: el seed actual borra datos antes de volver a insertarlos.
+Estos flags necesitan redeploy y no reemplazan el drenaje/conciliación de pagos abiertos.
 
 ### Dominio público
 

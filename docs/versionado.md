@@ -1,5 +1,11 @@
 # Versionado y Releases
 
+## Aplicación unificada
+
+`web/` tiene Release Please independiente mediante `release-please-web-config.json` y
+`.release-please-manifest-web.json`. Los releases legacy se conservan durante la transición.
+No eliminar sus historiales/tags hasta completar y verificar el cambio productivo.
+
 ## Objetivo
 
 Automatizar versionado y changelogs sin editar versiones manualmente en cada release.
@@ -10,6 +16,7 @@ El repositorio usa `release-please` con separación por componente:
 
 - `client`
 - `server`
+- `web`
 
 ## Estado actual
 

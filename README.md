@@ -1,5 +1,10 @@
 # Yellow Airline
 
+> **Migración a Next.js:** la aplicación unificada está en [`web/`](web/README.md).
+> El traslado productivo requiere acciones manuales. Seguir
+> [`docs/migration-to-vercel.md`](docs/migration-to-vercel.md) antes de cambiar Vercel, Railway,
+> PostgreSQL o Stripe. `client/` y `server/` se conservan durante la transición.
+
 <p>
   <strong>Aplicación full stack de reservas de vuelos con búsqueda interactiva, autenticación, pagos con Stripe y despliegue real en producción.</strong>
 </p>
@@ -71,6 +76,7 @@ La IA se ha utilizado como apoyo de ingeniería, no como sustituto del criterio 
 yellow-airline/
   client/   SPA en React + Vite
   server/   API REST en Express + Prisma
+  web/      aplicación unificada Next.js para Vercel
   docs/     documentación funcional y operativa
 ```
 
@@ -123,7 +129,8 @@ cd server && npm install
 cd server && npm run db:seed
 ```
 
-> Nota: el seed actual elimina e inserta datos de nuevo. Úsalo con cuidado fuera de desarrollo.
+> Los seeds están protegidos y son no destructivos. Solo para entornos no productivos con
+> `APP_ENV` explícito y `ALLOW_DEMO_SEED=true`. Nunca son un procedimiento de migración.
 
 ### 4. Ejecutar el proyecto
 
@@ -186,6 +193,7 @@ La guía completa está en `docs/deploy-guide.md`.
 - `docs/testing.md`
 - `docs/versionado.md`
 - `docs/deploy-guide.md`
+- `docs/migration-to-vercel.md` — procedimiento vigente del traslado, operación y rollback
 
 ## 📌 Resumen
 
