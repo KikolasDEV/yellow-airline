@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/KikolasDEV/yellow-airline/compare/server-1.3.0...server-1.3.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* **legacy:** secure API writes and prepare safe migration controls ([72019a2](https://github.com/KikolasDEV/yellow-airline/commit/72019a26ab9166cce74951c3eb29ba257ce897bc))
+
 ## [1.3.0](https://github.com/KikolasDEV/yellow-airline/compare/server-1.2.0...server-1.3.0) (2026-04-02)
 
 
