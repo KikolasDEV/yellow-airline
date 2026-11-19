@@ -5,6 +5,61 @@ on:
     branches: [main]
 
 jobs:
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: local-ci-only
+          POSTGRES_DB: yellow_airline_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d yellow_airline_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://test:local-ci-only@127.0.0.1:5432/yellow_airline_test
+      DIRECT_URL: postgresql://test:local-ci-only@127.0.0.1:5432/yellow_airline_test
+      TEST_DATABASE_URL: postgresql://test:local-ci-only@127.0.0.1:5432/yellow_airline_test
+      APP_ENV: test
+      APP_URL: http://localhost:3100
+      JWT_SECRET: ci-only-not-a-production-secret-more-than-32-characters
+      CRON_SECRET: ci-only-cron-not-a-production-secret-more-than-32-characters
+      STRIPE_SECRET_KEY: sk_test_ci_not_a_real_key
+      STRIPE_WEBHOOK_SECRET: whsec_ci_not_a_real_secret
+      WRITES_ENABLED: 'true'
+      PAYMENTS_ENABLED: 'true'
+      SETTLEMENTS_ENABLED: 'true'
+      MIGRATION_APPROVED: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test:unit
+      - run: npm run db:migrate:deploy
+      - run: npm run test:integration
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - name: Audit runtime dependencies
+        run: npm audit --omit=dev --audit-level=high
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: web-playwright-results
+          path: web/test-results/
   client:
     runs-on: ubuntu-latest
     defaults:
