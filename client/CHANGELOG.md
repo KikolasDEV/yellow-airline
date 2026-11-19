@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/KikolasDEV/yellow-airline/compare/client-1.4.1...client-1.4.2) (2026-11-19)
+
+
+### Bug Fixes
+
+* **legacy:** secure API writes and prepare safe migration controls ([72019a2](https://github.com/KikolasDEV/yellow-airline/commit/72019a26ab9166cce74951c3eb29ba257ce897bc))
+
 ## [1.4.1](https://github.com/KikolasDEV/yellow-airline/compare/client-1.4.0...client-1.4.1) (2026-04-03)
 
 
