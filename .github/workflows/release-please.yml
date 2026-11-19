@@ -11,6 +11,13 @@ permissions:
   pull-requests: write
 
 jobs:
+  release-please-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-web-config.json
+          manifest-file: .release-please-manifest-web.json
   release-please-client:
     runs-on: ubuntu-latest
     env:
