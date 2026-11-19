@@ -5,6 +5,7 @@ import flightRoutes from './routes/flightRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import { legacyWriteGuard } from './middleware/operations.js';
 
 const app = express();
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
@@ -15,6 +16,7 @@ app.use(cors({
 
 app.use('/api/payments', paymentRoutes);
 app.use(express.json());
+app.use(legacyWriteGuard);
 
 const PORT = process.env.PORT || 5000;
 

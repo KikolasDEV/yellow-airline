@@ -67,6 +67,12 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   try {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
+      // Next.js owns its purchases, even when both endpoints share a Stripe account.
+      if (session.metadata?.app === 'yellow-airline-web') return res.json({ received: true });
+      // Freeze this writer during the final snapshot/cutover. Non-2xx keeps Stripe retries.
+      if (process.env.LEGACY_WEBHOOK_ENABLED === 'false') {
+        return res.status(503).json({ error: 'Webhook legacy pausado para migracion.' });
+      }
 
       if (session.payment_status !== 'paid') {
         return res.json({ received: true });

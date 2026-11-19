@@ -5,13 +5,14 @@ import jwt from 'jsonwebtoken';
 
 const router = Router();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'llave-secreta-ultra-segura';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // POST: /api/users/login
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    if (!JWT_SECRET) return res.status(503).json({ error: 'Autenticacion no configurada.' });
     // 1. Buscamos al usuario por su email único
     const user = await prisma.user.findUnique({ where: { email } });
     

@@ -1,55 +1,20 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('✈️ Iniciando el seeding de Yellow Airline...');
-
-  // 1. Limpiamos datos para evitar conflictos de IDs o Unique constraints (primero Bookings por la integridad referencial)
-  await prisma.booking.deleteMany();
-  await prisma.flight.deleteMany();
-  await prisma.user.deleteMany();
-
-  // 2. Lista de vuelos sin el campo 'number' y añadiendo 'capacity'
-  const flights = [
-    { origin: 'Madrid', destination: 'Barcelona', departureTime: new Date('2026-05-10T10:00:00Z'), price: 45.99, capacity: 180 },
-    { origin: 'Madrid', destination: 'Paris', departureTime: new Date('2026-05-10T13:15:00Z'), price: 99.99, capacity: 180 },
-    { origin: 'Barcelona', destination: 'Paris', departureTime: new Date('2026-05-10T15:30:00Z'), price: 89.50, capacity: 180 },
-    { origin: 'Sevilla', destination: 'Londres', departureTime: new Date('2026-05-11T08:00:00Z'), price: 120.00, capacity: 150 },
-    { origin: 'Madrid', destination: 'Roma', departureTime: new Date('2026-05-12T12:00:00Z'), price: 65.25, capacity: 180 },
-    { origin: 'Valencia', destination: 'Berlín', departureTime: new Date('2026-05-13T18:45:00Z'), price: 95.00, capacity: 180 },
-    { origin: 'Bilbao', destination: 'Amsterdam', departureTime: new Date('2026-05-15T09:20:00Z'), price: 109.00, capacity: 180 },
-    { origin: 'Madrid', destination: 'Tokio', departureTime: new Date('2026-06-01T22:00:00Z'), price: 550.00, capacity: 300 }, // Avión más grande para largo radio
-  ];
-
-  const createdFlights = [];
-
-  for (const flight of flights) {
-    const createdFlight = await prisma.flight.create({ data: flight });
-    createdFlights.push(createdFlight);
+  if (process.env.ALLOW_DEMO_SEED !== 'true' || !['development', 'staging', 'test'].includes(process.env.APP_ENV ?? '')) {
+    throw new Error('Seed legacy bloqueado. Usa web/ para nuevos datos demo; nunca seedear produccion.');
   }
-
-  const hashedPassword = await bcrypt.hash('testing123', 10);
-
-  await prisma.user.create({
-    data: {
-      name: 'Kiko Tester',
-      email: 'kiko@gmail.com',
-      passport: 'TEST12345',
-      password: hashedPassword,
-      isVip: true,
-    },
+  const departureTime = new Date(Date.now() + 7 * 86400000);
+  const existing = await prisma.flight.findFirst({
+    where: { origin: 'Madrid', destination: 'Barcelona', departureTime: { gt: new Date() } },
   });
-
-  console.log(`✅ Seeding completado: ${flights.length} vuelos creados y usuario de prueba listo.`);
+  if (!existing) await prisma.flight.create({ data: { origin: 'Madrid', destination: 'Barcelona', departureTime, price: 45.99, capacity: 180 } });
+  console.log('Seed no destructivo completado.');
 }
 
-main()
-  .catch((e) => {
-    console.error("❌ Error en el seeding:", e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch((error: unknown) => {
+  console.error(error instanceof Error ? error.message : 'Seed failed');
+  process.exitCode = 1;
+}).finally(() => prisma.$disconnect());

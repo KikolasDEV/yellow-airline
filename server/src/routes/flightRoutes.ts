@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { calculateOccupiedSeats, calculatePricingSnapshot } from '../lib/pricing.js';
+import { requireFlightAdmin } from '../middleware/operations.js';
 
 const router = Router();
 
@@ -60,7 +61,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST: Crear un nuevo vuelo
-router.post('/', async (req, res) => {
+router.post('/', requireFlightAdmin, async (req, res) => {
   const { origin, destination, departureTime, price, capacity } = req.body;
   
   try {
@@ -80,7 +81,7 @@ router.post('/', async (req, res) => {
 });
 
 // UPDATE: Editar un vuelo existente
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireFlightAdmin, async (req, res) => {
   const { id } = req.params;
   const { origin, destination, departureTime, price, capacity } = req.body;
 
@@ -102,7 +103,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE: Cancelar/Eliminar un vuelo
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireFlightAdmin, async (req, res) => {
   const { id } = req.params;
 
   try {

@@ -46,7 +46,7 @@ const defaultPassengers: PassengerCount = {
   infants: 0,
 };
 
-export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }: BookingCustomizationSheetProps) => {
+export const BookingCustomizationSheet = ({ flight, isOpen, onClose: closeSheet, onConfirm }: BookingCustomizationSheetProps) => {
   const { t } = useTranslation();
   const [passengers, setPassengers] = useState<PassengerCount>(defaultPassengers);
   const [selectedSeatIds, setSelectedSeatIds] = useState<string[]>([]);
@@ -58,13 +58,12 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
   const payablePassengers = passengers.adults + passengers.children;
   const extraTotal = calculateSeatUpgradeTotal(selectedSeatIds, seats);
 
-  useEffect(() => {
-    if (!isOpen) {
-      setPassengers(defaultPassengers);
-      setSelectedSeatIds([]);
-      setIsSubmitting(false);
-    }
-  }, [isOpen]);
+  const onClose = () => {
+    setPassengers(defaultPassengers);
+    setSelectedSeatIds([]);
+    setIsSubmitting(false);
+    closeSheet();
+  };
 
   useEffect(() => {
     document.body.classList.toggle('sheet-open', isOpen);
@@ -73,10 +72,6 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
       document.body.classList.remove('sheet-open');
     };
   }, [isOpen]);
-
-  useEffect(() => {
-    setSelectedSeatIds((currentSeats) => currentSeats.slice(0, payablePassengers));
-  }, [payablePassengers]);
 
   const toggleSeat = (seatId: string) => {
     setSelectedSeatIds((currentSeats) => {
@@ -180,7 +175,11 @@ export const BookingCustomizationSheet = ({ flight, isOpen, onClose, onConfirm }
                 </section>
 
                 <section className="surface-card p-5 md:p-6">
-                  <PassengerSelector count={passengers} setCount={setPassengers} />
+                  <PassengerSelector count={passengers} setCount={(update) => {
+                    const next = typeof update === 'function' ? update(passengers) : update;
+                    setPassengers(next);
+                    setSelectedSeatIds((currentSeats) => currentSeats.slice(0, next.adults + next.children));
+                  }} />
                 </section>
 
                 <section className="surface-card p-5 md:p-6">
