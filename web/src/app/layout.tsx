@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Yellow Airline Web',
-  description: 'Next.js migration workspace for Yellow Airline.',
+  title: 'Yellow Airline · Gold',
+  description: 'Encuentra vuelos, elige tu asiento y consulta tus reservas con Yellow Airline.',
 };
 
 export default function RootLayout({

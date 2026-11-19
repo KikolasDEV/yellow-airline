@@ -4,11 +4,15 @@ import '@/i18n/client';
 import type { ReactNode } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from './ThemeProvider';
+import { SessionProvider } from './SessionProvider';
+import { LanguagePersistence } from './LanguagePersistence';
 
 export const AppProviders = ({ children }: { children: ReactNode }) => {
   return (
     <ThemeProvider>
-      <Toaster
+      <SessionProvider>
+        <LanguagePersistence />
+        <Toaster
         position="top-right"
         reverseOrder={false}
         toastOptions={{
@@ -21,7 +25,8 @@ export const AppProviders = ({ children }: { children: ReactNode }) => {
           },
         }}
       />
-      {children}
+        {children}
+      </SessionProvider>
     </ThemeProvider>
   );
 };

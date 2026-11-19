@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { useSession } from '@/components/providers/SessionProvider';
 
 export const LoginForm = () => {
   const { t } = useTranslation();
   const router = useRouter();
+  const { refresh } = useSession();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,6 +29,7 @@ export const LoginForm = () => {
       const data = await response.json();
 
       if (response.ok) {
+        await refresh();
         toast.success(`${t('login_success_prefix')} ${data.user.name}!`);
         router.push('/');
         router.refresh();

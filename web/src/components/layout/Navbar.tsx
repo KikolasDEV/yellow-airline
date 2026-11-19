@@ -1,44 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { ThemeToggle } from './ThemeToggle';
-
-interface SessionUser {
-  id?: number;
-  name?: string;
-  email?: string;
-  isVip?: boolean;
-  userId?: number;
-}
+import { useSession } from '@/components/providers/SessionProvider';
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoadingSession, setIsLoadingSession] = useState(true);
-  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
+  const { user: sessionUser, loading: isLoadingSession, refresh } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const { t, i18n } = useTranslation();
   const activeLanguage = i18n.resolvedLanguage?.startsWith('es') ?? i18n.language.startsWith('es') ? 'es' : 'en';
-
-  useEffect(() => {
-    const loadSession = async () => {
-      try {
-        const response = await fetch('/api/auth/session', { cache: 'no-store' });
-        const data = await response.json();
-        setSessionUser(data.user ?? null);
-      } catch {
-        setSessionUser(null);
-      } finally {
-        setIsLoadingSession(false);
-      }
-    };
-
-    void loadSession();
-  }, []);
 
   const jumpToSection = (sectionId: string) => {
     const scrollToTarget = () => {
@@ -59,8 +35,9 @@ export const Navbar = () => {
   };
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    setSessionUser(null);
+    const response = await fetch('/api/auth/logout', { method: 'POST' }).catch(() => null);
+    if (!response?.ok) { toast.error(t('login_connection_error')); return; }
+    await refresh();
     toast.success(t('logout_success'));
     setIsMenuOpen(false);
     router.push('/');
@@ -72,7 +49,7 @@ export const Navbar = () => {
   };
 
   const isLoggedIn = Boolean(sessionUser);
-  const userLabel = sessionUser?.name ?? sessionUser?.email ?? (sessionUser?.userId ? `VIP #${sessionUser.userId}` : null);
+  const userLabel = sessionUser?.name ?? sessionUser?.email;
 
   return (
     <nav className="navbar-shell fixed inset-x-0 top-0 z-40 px-4 py-4 md:px-6 lg:px-8">
@@ -91,6 +68,7 @@ export const Navbar = () => {
           </Link>
 
           <div className="hidden items-center gap-5 lg:flex">
+            {isLoggedIn && <Link href="/my-bookings" className="nav-link">{t('my_bookings')}</Link>}
             <button type="button" className="nav-link" onClick={() => jumpToSection('offers-section')}>
               {t('nav_offers')}
             </button>

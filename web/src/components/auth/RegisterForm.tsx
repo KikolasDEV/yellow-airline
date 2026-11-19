@@ -31,13 +31,13 @@ export const RegisterForm = () => {
         body: JSON.stringify(formData),
       });
 
-      await response.json();
+      const data = await response.json();
 
       if (response.ok) {
         toast.success(t('vip_register_success'));
         router.push('/login');
       } else {
-        toast.error(t('vip_register_error'));
+        toast.error(data.error ?? t('vip_register_error'));
       }
     } catch {
       toast.error(t('vip_register_connection_error'));
@@ -72,7 +72,8 @@ export const RegisterForm = () => {
 
         <label className="block space-y-2">
           <span className="micro-label">{t('password')}</span>
-          <input type="password" value={formData.password} onChange={(event) => updateField('password', event.target.value)} className="input-shell" required />
+          <input type="password" minLength={10} maxLength={72} autoComplete="new-password" value={formData.password} onChange={(event) => updateField('password', event.target.value)} className="input-shell" required />
+          <span className="block text-xs text-[var(--text-secondary)]">{t('password_rule')}</span>
         </label>
       </div>
 
