@@ -1,55 +1,41 @@
 import { requireSessionUser } from '@/middleware/auth';
-import { parseJsonBody } from '@/utils/http';
+import { mutationGuard, rateLimit } from '@/lib/request-security';
+import { parseJsonBody, PayloadTooLargeError, readBoundedBody } from '@/utils/http';
 import { jsonError, jsonOk } from '@/utils/responses';
 import { checkoutSessionSchema } from './payments.schemas';
-import { createCheckoutSession, handleStripeWebhook } from './payments.service';
+import { CheckoutError, createCheckoutSession, handleStripeWebhook } from './payments.service';
+
+export const paymentError = (error: unknown) => {
+  if (error instanceof CheckoutError) {
+    if (error.status >= 500) console.error('checkout_operation_failed', { status: error.status, reason: error.message });
+    return jsonError(error.message, error.status);
+  }
+  if (error instanceof Error && error.message === 'UNAUTHORIZED') return jsonError('Inicia sesion para continuar.', 401);
+  console.error('payment_operation_failed', { type: error instanceof Error ? error.name : 'unknown' });
+  return jsonError('No se pudo completar la operacion. No repitas el pago si ya se realizo.', 503);
+};
 
 export const checkoutSessionController = async (request: Request) => {
-  const body = await parseJsonBody<unknown>(request);
-  const parsedBody = checkoutSessionSchema.safeParse(body);
-
-  if (!parsedBody.success) {
-    return jsonError('Invalid checkout payload.', 400, parsedBody.error.flatten());
-  }
-
+  const blocked = mutationGuard(request);
+  if (blocked) return blocked;
   try {
-    const sessionUser = await requireSessionUser();
-    const result = await createCheckoutSession({
-      ...parsedBody.data,
-      userId: sessionUser.userId,
-    });
-
-    if ('error' in result && typeof result.error === 'string') {
-      return jsonError(result.error, result.status);
-    }
-
-    return jsonOk(result, { status: 201 });
-  } catch (error) {
-    if (error instanceof Error && error.message === 'UNAUTHORIZED') {
-      return jsonError('Acceso denegado. No hay sesion activa.', 401);
-    }
-
-    return jsonError('Error al iniciar el checkout con Stripe.', 500);
-  }
+    const user = await requireSessionUser();
+    if (!await rateLimit('checkout', String(user.userId), 20)) return jsonError('Demasiados intentos.', 429);
+    const body = checkoutSessionSchema.safeParse(await parseJsonBody(request));
+    if (!body.success) return jsonError('Revisa pasajeros y asientos.', 400);
+    return jsonOk(await createCheckoutSession({ ...body.data, userId: user.userId }), { status: 201 });
+  } catch (error) { return paymentError(error); }
 };
 
 export const webhookController = async (request: Request) => {
   const signature = request.headers.get('stripe-signature');
-
-  if (!signature) {
-    return jsonError('Firma de Stripe invalida.', 400);
-  }
-
+  if (!signature) return jsonError('Firma de Stripe invalida.', 400);
+  if (Number(request.headers.get('content-length') ?? 0) > 1048576) return jsonError('Payload demasiado grande.', 413);
   try {
-    const rawBody = await request.text();
-    const result = await handleStripeWebhook(rawBody, signature);
-
-    if ('error' in result && typeof result.error === 'string') {
-      return jsonError(result.error, result.status);
-    }
-
-    return jsonOk(result);
-  } catch {
-    return jsonError('Error al procesar webhook de Stripe.', 500);
+    // Never parse/re-serialize the body before signature verification.
+    return jsonOk(await handleStripeWebhook(await readBoundedBody(request, 1048576), signature));
+  } catch (error) {
+    if (error instanceof PayloadTooLargeError) return jsonError('Payload demasiado grande.', 413);
+    return paymentError(error);
   }
 };

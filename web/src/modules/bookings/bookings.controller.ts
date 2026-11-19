@@ -1,5 +1,5 @@
 import { requireSessionUser } from '@/middleware/auth';
-import { jsonError, jsonOk, notImplemented } from '@/utils/responses';
+import { jsonError, jsonOk } from '@/utils/responses';
 import { getMyBookings } from './bookings.service';
 
 export const getMyBookingsController = async () => {
@@ -17,5 +17,5 @@ export const getMyBookingsController = async () => {
 };
 
 export const createBookingController = async () => {
-  return notImplemented('bookings.create');
+  return jsonError('Usa /api/payments/checkout-session para reservar y pagar.', 410);
 };

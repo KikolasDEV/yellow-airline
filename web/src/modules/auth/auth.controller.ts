@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import { Prisma } from '@prisma/client';
 import { env } from '@/lib/env';
 import { SESSION_COOKIE_NAME } from '@/lib/jwt';
 import { getSessionUser } from '@/middleware/auth';
@@ -6,6 +7,7 @@ import { parseJsonBody } from '@/utils/http';
 import { jsonError, jsonOk } from '@/utils/responses';
 import { loginSchema, registerSchema } from './auth.schemas';
 import { getSessionUserDetails, loginUser, registerUser } from './auth.service';
+import { isSameOrigin, mutationGuard, rateLimit, requestIdentity } from '@/lib/request-security';
 
 const sessionCookieOptions = {
   httpOnly: true,
@@ -16,6 +18,8 @@ const sessionCookieOptions = {
 };
 
 export const loginController = async (request: Request) => {
+  const blocked = mutationGuard(request);
+  if (blocked) return blocked;
   const body = await parseJsonBody<unknown>(request);
   const parsedBody = loginSchema.safeParse(body);
 
@@ -24,6 +28,10 @@ export const loginController = async (request: Request) => {
   }
 
   try {
+    if (!await rateLimit('login-ip', requestIdentity(request), 30)
+      || !await rateLimit('login-email', parsedBody.data.email.toLowerCase(), 10)) {
+      return jsonError('Demasiados intentos. Intentalo mas tarde.', 429);
+    }
     const session = await loginUser(parsedBody.data);
 
     if (!session) {
@@ -43,6 +51,8 @@ export const loginController = async (request: Request) => {
 };
 
 export const registerController = async (request: Request) => {
+  const blocked = mutationGuard(request);
+  if (blocked) return blocked;
   const body = await parseJsonBody<unknown>(request);
   const parsedBody = registerSchema.safeParse(body);
 
@@ -51,6 +61,9 @@ export const registerController = async (request: Request) => {
   }
 
   try {
+    if (!await rateLimit('register', requestIdentity(request), 5, 3600)) {
+      return jsonError('Demasiados intentos. Intentalo mas tarde.', 429);
+    }
     const user = await registerUser(parsedBody.data);
 
     if (!user) {
@@ -61,12 +74,17 @@ export const registerController = async (request: Request) => {
       message: `Bienvenido a bordo, ${user.name}!`,
       user,
     }, { status: 201 });
-  } catch {
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return jsonError('El correo ya esta registrado', 409);
+    }
     return jsonError('Error en el servidor al registrar', 500);
   }
 };
 
-export const logoutController = async () => {
+export const logoutController = async (request: Request) => {
+  // Logging out must remain possible during maintenance.
+  if (!isSameOrigin(request)) return jsonError('Origen no permitido.', 403);
   const cookieStore = await cookies();
   cookieStore.delete(SESSION_COOKIE_NAME);
 
@@ -82,8 +100,8 @@ export const sessionController = async () => {
 
   try {
     const sessionUser = await getSessionUserDetails(user.userId);
-    return jsonOk({ user: sessionUser ?? user });
+    return jsonOk({ user: sessionUser ?? null });
   } catch {
-    return jsonOk({ user });
+    return jsonError('No se pudo comprobar la sesion.', 503);
   }
 };

@@ -4,7 +4,8 @@ import { prisma } from '@/lib/prisma';
 import type { LoginPayload, RegisterPayload, SessionUser } from '@/types/auth';
 
 export const loginUser = async ({ email, password }: LoginPayload) => {
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({ where: { email } })
+    ?? await prisma.user.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } });
 
   if (!user) {
     return null;
@@ -34,7 +35,8 @@ export const loginUser = async ({ email, password }: LoginPayload) => {
 };
 
 export const registerUser = async ({ name, email, passport, password }: RegisterPayload) => {
-  const existingUser = await prisma.user.findUnique({ where: { email } });
+  email = email.toLowerCase();
+  const existingUser = await prisma.user.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } });
 
   if (existingUser) {
     return null;

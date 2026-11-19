@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
 export const listFlightsQuerySchema = z.object({
-  origin: z.string().trim().optional(),
-  destination: z.string().trim().optional(),
+  origin: z.string().trim().max(100).optional(),
+  destination: z.string().trim().max(100).optional(),
+  date: z.iso.date().optional(),
 });
 
 export const createFlightSchema = z.object({

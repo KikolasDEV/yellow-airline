@@ -7,6 +7,7 @@
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -22,6 +23,7 @@ model User {
   isVip     Boolean  @default(true) // Todos tus usuarios actuales serán VIP
   createdAt DateTime @default(now())
   bookings  Booking[]
+  checkoutOrders CheckoutOrder[]
 }
 
 model Flight {
@@ -32,6 +34,8 @@ model Flight {
   price         Float
   capacity      Int       @default(180) // Capacidad estándar A320
   bookings      Booking[]
+  checkoutOrders CheckoutOrder[]
+  seats         FlightSeat[]
 }
 
 model Booking {
@@ -54,8 +58,61 @@ model Booking {
   seatNumber      String?
   gate            String?
   boardingGroup   String?
+  selectedSeats   String[] @default([])
+  totalAmount     Int?
+  checkoutOrder   CheckoutOrder?
   createdAt       DateTime @default(now())
 
   // Evitamos que un usuario reserve el mismo vuelo dos veces
   @@unique([userId, flightId]) 
+}
+
+// Additive tables: legacy Booking records and their prices remain unchanged.
+model CheckoutOrder {
+  id              String   @id @default(uuid())
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id])
+  flightId        Int
+  flight          Flight   @relation(fields: [flightId], references: [id])
+  bookingId       Int?     @unique
+  booking         Booking? @relation(fields: [bookingId], references: [id])
+  status          String   @default("CREATING")
+  stripeSessionId String?  @unique
+  adults          Int
+  children        Int
+  infants         Int
+  selectedSeats   String[]
+  basePrice       Float
+  unitAmount      Int
+  seatAmount      Int
+  amountTotal     Int
+  currency        String   @default("eur")
+  appUrl          String
+  environment     String
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  seats           FlightSeat[]
+
+  @@index([flightId, status])
+  @@index([userId, flightId, status])
+}
+
+model FlightSeat {
+  flightId Int
+  flight   Flight        @relation(fields: [flightId], references: [id])
+  number   String
+  orderId  String
+  order    CheckoutOrder @relation(fields: [orderId], references: [id])
+
+  @@id([flightId, number])
+  @@index([orderId])
+}
+
+model RateLimitBucket {
+  key       String   @id
+  count     Int
+  expiresAt DateTime
+
+  @@index([expiresAt])
 }

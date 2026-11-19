@@ -7,6 +7,7 @@ export const getFlightsController = async (request: Request) => {
   const parsedQuery = listFlightsQuerySchema.safeParse({
     origin: searchParams.get('origin') ?? undefined,
     destination: searchParams.get('destination') ?? undefined,
+    date: searchParams.get('date') ?? undefined,
   });
 
   if (!parsedQuery.success) {
