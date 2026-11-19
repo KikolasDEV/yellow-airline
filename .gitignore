@@ -1,0 +1,5 @@
+# Secrets and backups must never enter the repository.
+**/.env*
+!**/.env.example
+*.dump
+*.backup
